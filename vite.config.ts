@@ -8,15 +8,11 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
-    // 👇 This ensures client-side routing works (fixes 404 on refresh)
-    historyApiFallback: true,
-  },
-  build: {
-    outDir: "dist", // ✅ make sure build output is dist
   },
   plugins: [
     react(),
-    mode === "development" && componentTagger(),
+    mode === 'development' &&
+    componentTagger(),
   ].filter(Boolean),
   resolve: {
     alias: {
