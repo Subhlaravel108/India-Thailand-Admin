@@ -225,12 +225,12 @@ const AdminSidebar = () => {
             <div className="flex h-12 items-center">
               <Link to="/dashboard" className="flex items-center gap-3 flex-1">
                 <span className="bg-sidebar-primary text-white p-2 rounded-xl shadow">
-                  I-T
+                  J-T
                 </span>
                 {!isCollapsed && (
                   <div>
                     <h1 className="text-base font-semibold tracking-wide">
-                      India-Thailand
+                      Jaipur-Thailand
                     </h1>
                     <p className="text-xs opacity-70">Admin Portal</p>
                   </div>

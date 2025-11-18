@@ -11,6 +11,10 @@ export default api;
   const token = JSON.parse(localStorage.getItem("user") || "{}")?.token || "";
 
 // Login Apis 
+
+
+
+
 export const loginApi = async (email: string, password: string) => {
   const formData = new FormData();
   formData.append("email", email);
@@ -498,12 +502,26 @@ export const deleteTour = async (slugOrId: string) => {
 }
 
 export const fetchDashboardStats = async () => {
-  const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
-  const res = await api.get("/dashboard/stats", {
+  // const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
+  const res = await axios.get("http://127.0.0.1:3001/api/dashboard/overview", {
     headers: { Authorization: `Bearer ${token}` }
   });
-  return res.data.data;
+  return res.data;
 };
+
+export const fetchUserGraph = async () => {
+  const res = await axios.get("http://127.0.0.1:3001/api/dashboard/users-graph", {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return res.data
+};
+export const fetchBookingsGraph = async () => {
+  const res = await axios.get("http://127.0.0.1:3001/api/dashboard/bookings-graph", {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return res.data
+};
+
 
 
 export const fetchApiKey = async (id: string) => {

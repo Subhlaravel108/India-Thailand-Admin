@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Eye, Search } from "lucide-react";
 import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 const BookingList = () => {
   const [bookings, setBookings] = useState<any[]>([]);
@@ -56,16 +57,58 @@ const BookingList = () => {
       b.phone?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const downloadExcel = async () => {
+  try {
+      const token = JSON.parse(localStorage.getItem("user") || "{}")?.token || "";
+
+    if (!token) {
+      toast.error("Token missing! Please login again.");
+      return;
+    }
+
+    const response = await fetch(
+      `https://india-thailand-api-8.onrender.com/api/bookings/export`,
+      {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+       toast.error("Failed to download file");
+      return;
+    }
+
+    // Convert API response to downloadable Excel
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "bookings.xlsx"; // File Name
+    a.click();
+
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error(error);
+    toast.error("Something went wrong!");
+  }
+};
+
+
   return (
     <div className="space-y-6 p-6">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl font-bold tracking-tight">Bookings</h1>
-        <a
-          href={`${process.env.NEXT_PUBLIC_API_URL}/api/booking/export`}
-          className="px-4 py-2 bg-green-600 text-white rounded"
-        >
-          Download Excel
-        </a>
+       <button
+  onClick={downloadExcel}
+  className="px-4 py-2 bg-green-600 text-white rounded"
+>
+  Download Excel
+</button>
+
       </div>
 
       <Card className="p-4 shadow-md">

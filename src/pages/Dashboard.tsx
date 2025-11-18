@@ -1,140 +1,145 @@
 import React, { useEffect, useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Calendar, Map, FileText } from "lucide-react";
-import { fetchDashboardStats } from "@/lib/api";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Users,
+  Calendar,
+  Map,
+  FileText,
+  Plus,
+  Contact,
+  Package,
+} from "lucide-react";
+import { fetchDashboardStats, fetchUserGraph,fetchBookingsGraph } from "@/lib/api";
 import { Link } from "react-router-dom";
-import { Plus } from "lucide-react";
+import UserGraph, { UserGraphSkeleton } from "@/components/UserGraph";
+import BookingsGraph, { BookingsGraphSkeleton } from "@/components/BookingsGraph";
+// ---- Stat Components ----
 
 const StatCard = ({ title, value, description, icon, color, action }: any) => (
-  <Card className="transition-shadow shadow hover:shadow-lg hover:-translate-y-1 duration-200 relative">
+  <Card className="group relative overflow-hidden transition-all duration-300 hover:shadow-xl border border-gray-100 hover:border-gray-200">
+    <div className={`absolute top-0 left-0 w-1 h-full ${color.replace('bg-', 'bg-')}`}></div>
     <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-      <CardTitle className="text-sm font-medium">{title}</CardTitle>
-      <div className={`p-2 rounded-md ${color} animate-pulse-slow`}>{icon}</div>
+      <CardTitle className="text-sm font-medium text-gray-600">{title}</CardTitle>
+      <div className={`p-2 rounded-lg ${color} transition-transform duration-300 group-hover:scale-110`}>
+        {icon}
+      </div>
+    </CardHeader>
+    <CardContent>
+      <div className="text-2xl font-bold text-gray-900">{value}</div>
+      <p className="text-xs text-gray-500 mt-1">{description}</p>
       {action && (
-        <div className="absolute top-3 right-3">
+        <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           {action}
         </div>
       )}
-    </CardHeader>
-    <CardContent>
-      <div className="text-2xl font-bold">{value}</div>
-      <p className="text-xs text-muted-foreground">{description}</p>
     </CardContent>
   </Card>
 );
 
 const StatCardSkeleton = () => (
-  <Card className="transition-shadow shadow hover:shadow-lg hover:-translate-y-1 duration-200">
+  <Card className="animate-pulse">
     <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-      <div className="h-4 w-24 bg-gray-200 rounded animate-pulse" />
-      <div className="h-8 w-8 bg-gray-200 rounded-md animate-pulse" />
+      <div className="h-4 w-24 bg-gray-200 rounded" />
+      <div className="h-8 w-8 bg-gray-200 rounded-lg" />
     </CardHeader>
     <CardContent>
-      <div className="h-8 w-20 bg-gray-200 rounded mb-2 animate-pulse" />
-      <div className="h-4 w-32 bg-gray-100 rounded animate-pulse" />
+      <div className="h-8 w-20 bg-gray-200 rounded mb-2" />
+      <div className="h-4 w-32 bg-gray-200 rounded" />
     </CardContent>
   </Card>
 );
 
-const RecentActivityCard = () => {
-  const activities = [
-    { id: 1, action: "New booking", details: "Golden Triangle Tour", time: "2 minutes ago" },
-    { id: 2, action: "Updated tour", details: "Bangkok City Tour", time: "1 hour ago" },
-    { id: 3, action: "New user registered", details: "john.doe@example.com", time: "3 hours ago" },
-    { id: 4, action: "New blog post", details: "Top 10 Places to Visit in Thailand", time: "Yesterday" },
-    { id: 5, action: "Updated destination", details: "Phuket Island", time: "Yesterday" }
-  ];
-
-  return (
-    <Card className="col-span-1 lg:col-span-2">
-      <CardHeader>
-        <CardTitle>Recent Activity</CardTitle>
-        <CardDescription>Latest actions in the admin portal</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {activities.map(activity => (
-            <div key={activity.id} className="flex items-start border-b pb-3 last:border-0 last:pb-0">
-              <div className="w-2 h-2 mt-2 rounded-full bg-primary mr-3"></div>
-              <div className="space-y-1">
-                <p className="text-sm font-medium leading-none">{activity.action}</p>
-                <p className="text-sm text-muted-foreground">{activity.details}</p>
-                <p className="text-xs text-muted-foreground">{activity.time}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
-
-const UpcomingToursCard = () => {
-  const upcomingTours = [
-    { id: 1, name: "Jaipur City Tour", date: "Apr 25, 2025", bookings: 12 },
-    { id: 2, name: "Bangkok Explorer", date: "Apr 28, 2025", bookings: 8 },
-    { id: 3, name: "Phuket Beach Getaway", date: "May 3, 2025", bookings: 15 },
-    { id: 4, name: "Chiang Mai Adventure", date: "May 5, 2025", bookings: 7 }
-  ];
-  
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Upcoming Tours</CardTitle>
-        <CardDescription>Tours starting in the next 30 days</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {upcomingTours.map(tour => (
-            <div key={tour.id} className="flex justify-between items-center border-b pb-2 last:border-0 last:pb-0">
-              <div>
-                <p className="font-medium text-sm">{tour.name}</p>
-                <p className="text-xs text-muted-foreground">{tour.date}</p>
-              </div>
-              <div className="bg-primary/10 text-primary text-xs font-medium px-2 py-1 rounded-full">
-                {tour.bookings} bookings
-              </div>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
+// ---- Dashboard Main Component ----
 
 const Dashboard = () => {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
+  const [graphData, setGraphData] = useState<any>([]);
+  const [graphLoading, setGraphLoading] = useState(true);
+  const [bookingGraph, setBookingGraph] = useState([]);
+const [loadingBookingGraph, setLoadingBookingGraph] = useState(true);
 
   useEffect(() => {
     const loadStats = async () => {
       setLoading(true);
       try {
         const data = await fetchDashboardStats();
-        setStats(data);
+        setStats(data.data);
       } catch (e) {
         setStats(null);
       } finally {
         setLoading(false);
       }
     };
+
+    const loadGraph = async () => {
+      setGraphLoading(true);
+      try {
+        const res = await fetchUserGraph();
+        setGraphData(res.data);
+       console.log("user=",res.data)
+      } catch (err) {
+        setGraphData([]);
+      } finally {
+        setGraphLoading(false);
+      }
+    };
+
+    const loadBookingGraph = async () => {
+  setLoadingBookingGraph(true);
+  try {
+    const res = await fetchBookingsGraph();
+    setBookingGraph(res.data);
+ 
+
+  } catch (err) {
+    setBookingGraph([]);
+  } finally {
+    setLoadingBookingGraph(false);
+  }
+};
+
     loadStats();
+    loadGraph();
+    loadBookingGraph()
   }, []);
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    return "Good evening";
+  };
+
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-sm text-muted-foreground">
-          {new Date().toLocaleDateString('en-US', { 
-            weekday: 'long',
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-          })}
-        </p>
+    <div className="space-y-6 p-6 bg-gray-50 min-h-screen">
+      {/* Header */}
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">{getGreeting()}! 👋</h1>
+          <p className="text-gray-600 mt-1">
+            Welcome to Jaipur-Thailand Tours Admin Dashboard
+          </p>
+        </div>
+        <div className="bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm">
+          <p className="text-sm font-medium text-gray-900">
+            {new Date().toLocaleDateString("en-US", {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </p>
+        </div>
       </div>
-      <h2 className="text-xl font-semibold mt-8 mb-2">Overview</h2>
+
+      {/* Stats Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {loading ? (
           <>
@@ -142,69 +147,83 @@ const Dashboard = () => {
             <StatCardSkeleton />
             <StatCardSkeleton />
             <StatCardSkeleton />
+            <StatCardSkeleton />
+            <StatCardSkeleton />
           </>
         ) : (
-          <>
-            <StatCard
-              title="Total Users"
-              value={stats?.total_users ?? "-"}
-              description="Total registered users"
-              icon={<Users className="h-4 w-4 text-white" />}
-              color="bg-gradient-to-tr from-blue-500 to-blue-700 text-white"
-              action={
-                <Link to="/users/add">
-                  <button className="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-1 shadow transition">
-                    <Plus className="w-4 h-4" />
-                  </button>
-                </Link>
-              }
-            />
-            <StatCard
-              title="Blog Posts"
-              value={stats?.total_blogs ?? "-"}
-              description="Total blog posts"
-              icon={<FileText className="h-4 w-4 text-white" />}
-              color="bg-gradient-to-tr from-purple-500 to-pink-500 text-white"
-              action={
-                <Link to="/blogs/add">
-                  <button className="bg-pink-600 hover:bg-pink-700 text-white rounded-full p-1 shadow transition">
-                    <Plus className="w-4 h-4" />
-                  </button>
-                </Link>
-              }
-            />
-            <StatCard
-              title="Active Tours"
-              value={stats?.total_active_tours ?? "-"}
-              description="Currently active tours"
-              icon={<Calendar className="h-4 w-4 text-white" />}
-              color="bg-gradient-to-tr from-orange-400 to-yellow-500 text-white"
-              action={
-                <Link to="/tours/add">
-                  <button className="bg-orange-500 hover:bg-orange-600 text-white rounded-full p-1 shadow transition">
-                    <Plus className="w-4 h-4" />
-                  </button>
-                </Link>
-              }
-            />
-            <StatCard
-              title="Destinations"
-              value={stats?.total_destinations ?? "-"}
-              description="Total destinations"
-              icon={<Map className="h-4 w-4 text-white" />}
-              color="bg-gradient-to-tr from-teal-400 to-teal-700 text-white"
-              action={
-                <Link to="/destinations/add">
-                  <button className="bg-teal-600 hover:bg-teal-700 text-white rounded-full p-1 shadow transition">
-                    <Plus className="w-4 h-4" />
-                  </button>
-                </Link>
-              }
-            />
-          </>
+        <>
+  <StatCard
+    title="Total Users"
+    value={stats?.totalUsers ?? "-"}
+    description="Registered travelers"
+    icon={<Users className="h-4 w-4 text-white" />}
+    color="bg-gradient-to-br from-blue-500 to-blue-600"
+  />
+
+  <StatCard
+    title="Blog Posts"
+    value={stats?.totalBlogs ?? "-"}
+    description="Travel articles"
+    icon={<FileText className="h-4 w-4 text-white" />}
+    color="bg-gradient-to-br from-purple-500 to-purple-600"
+  />
+
+  <StatCard
+    title="Active Tours"
+    value={stats?.activeTours ?? "-"}
+    description="Running tours"
+    icon={<Calendar className="h-4 w-4 text-white" />}
+    color="bg-gradient-to-br from-orange-500 to-orange-600"
+  />
+
+  <StatCard
+    title="Destinations"
+    value={stats?.totalDestinations ?? "-"}
+    description="Tour locations"
+    icon={<Map className="h-4 w-4 text-white" />}
+    color="bg-gradient-to-br from-teal-500 to-teal-600"
+  />
+
+  <StatCard
+    title="Contacts"
+    value={stats?.totalContacts ?? "-"}
+    description="Total Contact Requests"
+    icon={<Users className="h-4 w-4 text-white" />}   // Contact icon not available, using Users
+    color="bg-gradient-to-br from-rose-500 to-rose-600"
+  />
+
+  <StatCard
+    title="Total Packages"
+    value={stats?.totalPackges ?? "-"}
+    description="Available packages"
+    icon={<Package className="h-4 w-4 text-white" />}
+    color="bg-gradient-to-br from-green-500 to-green-600"
+  />
+</>
+
         )}
       </div>
-    </div>
+
+      {/* Main Content Grid */}
+      <div className="grid gap-6 grid-cols-2">
+        {/* <div className=" space-y-6"> */}
+          {graphLoading ? 
+            <UserGraphSkeleton /> 
+            : 
+            <UserGraph data={graphData} />
+          }
+            {loadingBookingGraph ? (
+    <BookingsGraphSkeleton />
+  ) : (
+    <BookingsGraph data={bookingGraph} />
+  )}
+        </div>
+
+        <div className="space-y-6">
+          {/* Future right-side widgets */}
+        </div>
+      </div>
+    // </div>
   );
 };
 
