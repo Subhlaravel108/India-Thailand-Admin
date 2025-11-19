@@ -83,7 +83,7 @@ const [loadingBookingGraph, setLoadingBookingGraph] = useState(true);
       try {
         const res = await fetchUserGraph();
         setGraphData(res.data);
-       console.log("user=",res.data)
+      //  console.log("user=",res.data)
       } catch (err) {
         setGraphData([]);
       } finally {
@@ -205,7 +205,7 @@ const [loadingBookingGraph, setLoadingBookingGraph] = useState(true);
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid gap-6 grid-cols-2">
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
         {/* <div className=" space-y-6"> */}
           {graphLoading ? 
             <UserGraphSkeleton /> 

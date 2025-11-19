@@ -10,7 +10,10 @@ import {
 } from "recharts";
 
 export const BookingsGraphSkeleton = () => (
-  <div className="w-full h-64 bg-gray-200 rounded-xl animate-pulse"></div>
+   <div className="bg-white p-4 rounded-xl shadow-sm border animate-pulse">
+    <div className="h-5 w-48 bg-gray-200 rounded mb-4"></div>
+    <div className="h-48 bg-gray-200 rounded"></div>
+  </div>
 );
 
 const BookingsGraph = ({ data }) => {
