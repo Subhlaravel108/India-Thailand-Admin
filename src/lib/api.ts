@@ -165,7 +165,7 @@ export const fetchAllBookings=async({page=1,search=""}={})=>{
   return res.data
 }
 export const fetchFeedbacks=async({page=1,search=""}={})=>{
-  const res=await axios.get("http://127.0.0.1:3001/api/feedback-list",{
+  const res=await api.get("/feedback-list",{
     headers:{
       Authorization:`Bearer ${token}`
     },
@@ -187,7 +187,7 @@ export const ChangeFeedbackStatus = async ({
  
 
   const response = await api.post(
-    `http://127.0.0.1:3001/api/feedback/status/${feedback_id}`,
+    `/feedback/status/${feedback_id}`,
     { status },
     {
       headers: {
