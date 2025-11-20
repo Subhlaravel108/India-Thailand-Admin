@@ -37,20 +37,10 @@ import UpdateApiKey from "./pages/ApiKeys/UpdateViatorApiKey";
 import CategoriesList from "./pages/Categories/CategoryList";
 import CategoryForm from "./pages/Categories/CategoryForm";
 
-// Products
-import ProductList from "./pages/Products/ProductList";
-import ProductForm from "./pages/Products/ProductForm";
-
-// Orders
-import OrderList from "./pages/Orders/OrderList";
-import OrderDetail from "./pages/Orders/OrderDetail";
-
 // NotFound
 import NotFound from "./pages/NotFound";
 
-// Coupons
-import CouponList from "./pages/Coupons/CouponList";
-import CouponForm from "./pages/Coupons/CouponForm";
+
 import TourList from "./pages/Tours/TourList";
 import TourForm from "./pages/Tours/TourForm";
 import TourPackageList from "./pages/TourPackage/TourPackageList";
@@ -59,6 +49,7 @@ import DestinationList from "./pages/destination/DestinationList";
 import DestinationForm from "./pages/destination/DestinationForm";
 import ContactList from "./pages/contact/contact";
 import Bookings from "./pages/bookings/bookingList";
+import FeedbackList from "./pages/Feedbacks/FeedbackList";
 
 const queryClient = new QueryClient();
 
@@ -233,6 +224,7 @@ const App = () => (
 
             <Route path="/contacts" element={<ContactList/>}/>
             <Route path="/bookings" element={<Bookings/>}/>
+            <Route path="/feedbacks" element={<FeedbackList/>}/>
 
 
              {/* Categories routes */}
@@ -245,14 +237,9 @@ const App = () => (
             <Route path="/destination/add" element={<DestinationForm/>}/>
             <Route path="/destination/edit/:id" element={<DestinationForm/>}/>
 
-            {/* Products routes */}
-            <Route path="/products" element={<ProductList />} />
-            <Route path="/products/add" element={<ProductForm />} />
-            <Route path="/products/edit/:id" element={<ProductForm />} />
+          
 
-            {/* Orders routes */}
-            <Route path="/orders" element={<OrderList />} />
-            <Route path="/orders/:id" element={<OrderDetail />} />
+          
             
             {/* Settings */}
             <Route path="/settings" element={<Settings />} />
@@ -260,10 +247,7 @@ const App = () => (
             <Route path="/Api-keys" element={<UpdateApiKey />} />
             <Route path="/settings/social-media" element={<SocialMediaSettings />} />
 
-            {/* Coupons routes */}
-            <Route path="/coupons" element={<CouponList />} />
-            <Route path="/coupons/add" element={<CouponForm />} />
-            <Route path="/coupons/edit/:id" element={<CouponForm />} />
+           
           </Route>
 
           {/* 404 route */}

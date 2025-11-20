@@ -164,6 +164,40 @@ export const fetchAllBookings=async({page=1,search=""}={})=>{
   })
   return res.data
 }
+export const fetchFeedbacks=async({page=1,search=""}={})=>{
+  const res=await axios.get("http://127.0.0.1:3001/api/feedback-list",{
+    headers:{
+      Authorization:`Bearer ${token}`
+    },
+    params:{
+      page,
+      search 
+    }
+  })
+  return res.data
+}
+
+export const ChangeFeedbackStatus = async ({
+  feedback_id,
+  status,
+}: {
+  feedback_id: string;
+  status: string;
+}) => {
+ 
+
+  const response = await api.post(
+    `http://127.0.0.1:3001/api/feedback/status/${feedback_id}`,
+    { status },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data;
+};
 
 // Category APIs
 

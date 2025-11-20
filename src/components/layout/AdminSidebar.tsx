@@ -20,6 +20,7 @@ import {
   LocateIcon,
   MapPin,
   Contact,
+  StarIcon,
 } from "lucide-react";
 
 type MenuChild = {
@@ -93,9 +94,7 @@ const AdminSidebar = () => {
 
   const menuItems: MenuItem[] = [
     { icon: Home, label: "Dashboard", to: "/dashboard" },
-    // { icon: Grid2x2Plus, label: "Categories", to: "/categories" },
-    { icon: Boxes, label: "Products", to: "/products" },
-    { icon: ShoppingCart, label: "Orders", to: "/orders" },
+
 
     {
       icon: Car,
@@ -129,8 +128,6 @@ const AdminSidebar = () => {
 
       
     },
-    
-    { icon: Percent, label: "Coupons", to: "/coupons" },
       {
     icon: FileText,
     label: "Blog Management",
@@ -154,6 +151,7 @@ const AdminSidebar = () => {
   },
     { icon: Users, label: "Users", to: "/users" },
     { icon: Contact, label: "Bookings", to: "/bookings" },
+    { icon: StarIcon, label: "Feedbacks", to: "/feedbacks" },
     { icon: Contact, label: "Contacts", to: "/contacts" },
     { icon: Settings, label: "Settings", to: "/settings" },
     { icon: LogIn, label: "Logout", to: "/logout" },
