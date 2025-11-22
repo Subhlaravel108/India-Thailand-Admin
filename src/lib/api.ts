@@ -88,14 +88,19 @@ export const changePassword = async (payload: {
   new_password: string;
   new_password_confirmation: string;
 }) => {
-  const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
+  const token = JSON.parse(localStorage.getItem("user") || "{}")?.token || "";
   // Using FormData so that the request mimics the provided curl command
-  const formData = new FormData();
-  formData.append("current_password", payload.current_password);
-  formData.append("new_password", payload.new_password);
-  formData.append("new_password_confirmation", payload.new_password_confirmation);
+  // const formData = new FormData();
+  // formData.append("current_password", payload.current_password);
+  // formData.append("new_password", payload.new_password);
+  // formData.append("new_password_confirmation", payload.new_password_confirmation);
 
-  const response = await api.post("/change-password", formData, {
+  const response = await axios.post("http://127.0.0.1:3001/api/auth/change-password",  
+     {
+    current_password: payload.current_password,
+    new_password: payload.new_password,
+    new_password_confirmation: payload.new_password_confirmation
+  }, {
     headers: {
       Authorization: `Bearer ${token}`
     },
@@ -558,265 +563,92 @@ export const fetchBookingsGraph = async () => {
 
 
 
-export const fetchApiKey = async (id: string) => {
-  const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
-  const response = await api.get(`/viatorkeylist/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: "application/json",
-    },
-  });
-  return response.data;
-};
+// export const fetchApiKey = async (id: string) => {
+//   const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
+//   const response = await api.get(`/viatorkeylist/${id}`, {
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//       Accept: "application/json",
+//     },
+//   });
+//   return response.data;
+// };
 
-export const fetchViatorKey = async () => {
-  const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
-  const response = await api.get("/api-key/list", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: "application/json",
-    },
-  });
-  // Assuming the API returns an array; adjust if needed.
-  return response.data; // Returns the first API key object.
-};
+// export const fetchViatorKey = async () => {
+//   const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
+//   const response = await api.get("/api-key/list", {
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//       Accept: "application/json",
+//     },
+//   });
+//   // Assuming the API returns an array; adjust if needed.
+//   return response.data; // Returns the first API key object.
+// };
 
-export const updateViatorApiKey = async (id: string, key: string) => {
-  const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
-  const response = await api.put(
-    `/api-key/update/${id}`,
-    { key },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  return response.data;
-};
+// export const updateViatorApiKey = async (id: string, key: string) => {
+//   const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
+//   const response = await api.put(
+//     `/api-key/update/${id}`,
+//     { key },
+//     {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//         "Content-Type": "application/json",
+//       },
+//     }
+//   );
+//   return response.data;
+// };
 
-//end of other APIs
+// //end of other APIs
 
-// Product APIs
+// // Product APIs
 
-export const fetchProducts = async ({ page = 1, search = "" } = {}) => {
-  const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
-  const response = await api.get("/products", {
-    headers: { Authorization: `Bearer ${token}` },
-    params: {
-      page,
-      name: search || undefined, // will exclude 'search' if empty
-    },
-  });
-  return response.data;
-};
+// export const fetchProducts = async ({ page = 1, search = "" } = {}) => {
+//   const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
+//   const response = await api.get("/products", {
+//     headers: { Authorization: `Bearer ${token}` },
+//     params: {
+//       page,
+//       name: search || undefined, // will exclude 'search' if empty
+//     },
+//   });
+//   return response.data;
+// };
 
-export const fetchProduct = async (id: string) => {
-  const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
-  const response = await api.get(`/products/${id}`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data;
-};
+// export const fetchProduct = async (id: string) => {
+//   const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
+//   const response = await api.get(`/products/${id}`, {
+//     headers: { Authorization: `Bearer ${token}` }
+//   });
+//   return response.data;
+// };
 
-export const createProduct = async (payload: any) => {
-  const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
-  const response = await api.post("/products/create", payload, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data;
-};
+// export const createProduct = async (payload: any) => {
+//   const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
+//   const response = await api.post("/products/create", payload, {
+//     headers: { Authorization: `Bearer ${token}` }
+//   });
+//   return response.data;
+// };
 
-export const updateProduct = async (id: string, payload: any) => {
-  const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
-  const response = await api.put(`/products/update/${id}`, payload, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data;
-};
+// export const updateProduct = async (id: string, payload: any) => {
+//   const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
+//   const response = await api.put(`/products/update/${id}`, payload, {
+//     headers: { Authorization: `Bearer ${token}` }
+//   });
+//   return response.data;
+// };
 
-export const deleteProduct = async (id: string) => {
-  const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
-  const response = await api.delete(`/products/delete/${id}`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data;
-};
+// export const deleteProduct = async (id: string) => {
+//   const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
+//   const response = await api.delete(`/products/delete/${id}`, {
+//     headers: { Authorization: `Bearer ${token}` }
+//   });
+//   return response.data;
+// };
 // Product APIs End
 
 // Order APIs
-
-export const fetchOrders = async ({ page = 1, search = "" } = {}) => {
-  const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
-  const response = await api.get("/k/orders", {
-    headers: { Authorization: `Bearer ${token}` },
-    params: {
-      page,
-      search: search || undefined, // will exclude 'search' if empty
-    },
-  });
-  return response.data;
-};
-
-export const fetchOrder = async (id: string) => {
-  const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
-  const response = await api.get(`/k/orders/${id}`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data;
-};
-
-
-
-export const deleteOrder = async (id: string) => {
-  const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
-  const response = await api.delete(`/k/orders/delete/${id}`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data;
-};
-
-// chaneg order status
-export const changeOrderStatus = async (id: string, payload: any) => {
-  const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
-  const response = await api.put(`/k/orders/${id}/status`, payload, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data;
-};
-
-// update order tracking details
-export const updateOrderTracking = async (id: string, payload: {
-  courier_name: string;
-  tracking_number: string;
-  tracking_url: string;
-}) => {
-  const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
-  const response = await api.put(`/k/orders/${id}/tracking`, payload, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data;
-};
-
-// download order invoice
-export const downloadOrderInvoice = async (id: string) => {
-  const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
-  const response = await api.get(`/k/orders/${id}/invoice`, {
-    headers: { 
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/pdf, application/json'
-    },
-    responseType: 'blob'
-  });
-  
-  // Check if response is actually a PDF
-  const contentType = response.headers['content-type'];
-  if (contentType && contentType.includes('application/json')) {
-    // If it's JSON, it's probably an error message
-    const text = await response.data.text();
-    const error = JSON.parse(text);
-    throw new Error(error.message || 'Failed to generate invoice');
-  }
-  
-  return response.data;
-};
-
-// update order items packing status
-export const updateOrderItemsPacking = async (orderId: string, payload: {
-  items: Array<{
-    order_item_id: number;
-    stock_status: 'available' | 'partial' | 'unavailable';
-    packed_quantity: number;
-    admin_note?: string;
-  }>;
-}) => {
-  const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
-  const response = await api.post(`/k/orders/${orderId}/items/update-packing`, payload, {
-    headers: { 
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    }
-  });
-  return response.data;
-};
-
-
-// Schedule/Report APIs
-export const fetchScheduleList = async ({ page = 1, type = "", command = "" } = {}) => {
-  const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
-  const response = await api.get("/k/schedule/list", {
-    headers: { Authorization: `Bearer ${token}` },
-    params: {
-      page,
-      type: type || undefined,
-      command: command || undefined,
-    },
-  });
-  return response.data;
-};
-
-export const createScheduleRequest = async (payload: {
-  command: string;
-  type: string;
-  arguments?: any[];
-}) => {
-  const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
-  const response = await api.post("/k/schedule/create", payload, {
-    headers: { 
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    }
-  });
-  return response.data;
-};
-
-// Order APIs End
-
-// Coupon APIs
-
-export const fetchCoupons = async ({ page = 1, search = "" } = {}) => {
-  const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
-  const response = await api.get("/k/coupons", {
-    headers: { Authorization: `Bearer ${token}` },
-    params: {
-      page,
-      search: search || undefined, // will exclude 'search' if empty
-    },
-  });
-  return response.data;
-};
-
-export const fetchCoupon = async (id: string) => {
-  const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
-  const response = await api.get(`/k/coupons/${id}`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data;
-};
-export const createCoupon = async (payload: any) => {
-  const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
-  const response = await api.post("/k/coupons/create", payload, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data;
-};
-
-export const updateCoupon = async (id: string, payload: any) => {
-  const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
-  const response = await api.put(`/k/coupons/update/${id}`, payload, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data;
-};  
-
-export const deleteCoupon = async (id: string) => {
-  const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
-  const response = await api.delete(`/k/coupons/delete/${id}`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data;
-};
-
-// Coupon APIs End
 

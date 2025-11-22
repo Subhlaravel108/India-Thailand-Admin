@@ -31,7 +31,7 @@ import UsersList from "./pages/Users/UsersList";
 import Settings from "./pages/Settings";
 
 //api keys 
-import UpdateApiKey from "./pages/ApiKeys/UpdateViatorApiKey";
+// import UpdateApiKey from "./pages/ApiKeys/UpdateViatorApiKey";
 
 // categories
 import CategoriesList from "./pages/Categories/CategoryList";
@@ -72,113 +72,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-const defaultLinks = {
-  facebook: "",
-  twitter: "",
-  instagram: "",
-  linkedin: "",
-  youtube: "",
-  whatsapp: "",
-  tiktok: "",
-  pinterest: "",
-  telegram: "",
-};
 
-const SocialMediaSettings = () => {
-  const [links, setLinks] = React.useState(defaultLinks);
-  const [savedLinks, setSavedLinks] = React.useState(defaultLinks);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLinks({ ...links, [e.target.name]: e.target.value });
-  };
-
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSavedLinks(links);
-    toast.success("Social media links saved (locally)");
-  };
-
-  const handleReset = () => {
-    setLinks(savedLinks);
-    toast("Changes reverted");
-  };
-
-  return (
-    <div className="max-w-2xl mx-auto mt-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>Social Media Settings</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSave} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="facebook" className="text-sm font-medium">Facebook</label>
-                <Input id="facebook" name="facebook" value={links.facebook} onChange={handleChange} placeholder="https://facebook.com/yourpage" />
-              </div>
-              <div>
-                <label htmlFor="twitter" className="text-sm font-medium">Twitter</label>
-                <Input id="twitter" name="twitter" value={links.twitter} onChange={handleChange} placeholder="https://twitter.com/yourhandle" />
-              </div>
-              <div>
-                <label htmlFor="instagram" className="text-sm font-medium">Instagram</label>
-                <Input id="instagram" name="instagram" value={links.instagram} onChange={handleChange} placeholder="https://instagram.com/yourprofile" />
-              </div>
-              <div>
-                <label htmlFor="linkedin" className="text-sm font-medium">LinkedIn</label>
-                <Input id="linkedin" name="linkedin" value={links.linkedin} onChange={handleChange} placeholder="https://linkedin.com/in/yourprofile" />
-              </div>
-              <div>
-                <label htmlFor="youtube" className="text-sm font-medium">YouTube</label>
-                <Input id="youtube" name="youtube" value={links.youtube} onChange={handleChange} placeholder="https://youtube.com/yourchannel" />
-              </div>
-              <div>
-                <label htmlFor="whatsapp" className="text-sm font-medium">WhatsApp</label>
-                <Input id="whatsapp" name="whatsapp" value={links.whatsapp} onChange={handleChange} placeholder="https://wa.me/yourphonenumber" />
-              </div>
-              <div>
-                <label htmlFor="tiktok" className="text-sm font-medium">TikTok</label>
-                <Input id="tiktok" name="tiktok" value={links.tiktok} onChange={handleChange} placeholder="https://tiktok.com/@yourhandle" />
-              </div>
-              <div>
-                <label htmlFor="pinterest" className="text-sm font-medium">Pinterest</label>
-                <Input id="pinterest" name="pinterest" value={links.pinterest} onChange={handleChange} placeholder="https://pinterest.com/yourprofile" />
-              </div>
-              <div>
-                <label htmlFor="telegram" className="text-sm font-medium">Telegram</label>
-                <Input id="telegram" name="telegram" value={links.telegram} onChange={handleChange} placeholder="https://t.me/yourusername" />
-              </div>
-            </div>
-            <CardFooter className="flex gap-2 justify-end px-0">
-              <Button type="button" variant="outline" onClick={handleReset}>Reset</Button>
-              <Button type="submit">Save</Button>
-            </CardFooter>
-          </form>
-        </CardContent>
-      </Card>
-      <Card className="mt-8">
-        <CardHeader>
-          <CardTitle>Preview</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ul className="space-y-2">
-            {Object.entries(savedLinks).map(([key, value]) =>
-              value ? (
-                <li key={key}>
-                  <span className="font-medium capitalize">{key}:</span>{' '}
-                  <a href={value} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{value}</a>
-                </li>
-              ) : null
-            )}
-            {Object.values(savedLinks).every(v => !v) && (
-              <li className="text-muted-foreground">No social media links saved yet.</li>
-            )}
-          </ul>
-        </CardContent>
-      </Card>
-    </div>
-  );
-};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -244,8 +138,8 @@ const App = () => (
             {/* Settings */}
             <Route path="/settings" element={<Settings />} />
             <Route path="/change-password" element={<ChangePassword />} />
-            <Route path="/Api-keys" element={<UpdateApiKey />} />
-            <Route path="/settings/social-media" element={<SocialMediaSettings />} />
+            {/* <Route path="/Api-keys" element={<UpdateApiKey />} /> */}
+            {/* <Route path="/settings/social-media" element={<SocialMediaSettings />} /> */}
 
            
           </Route>

@@ -46,7 +46,7 @@ const ChangePassword = () => {
       setNewPassword("");
       setConfirmPassword("");
     } catch (error: any) {
-      // console.error("Error changing password:", error);
+      console.error("Error changing password:", error);
       toast.error(
         error?.response?.data?.message || "An error occurred while changing password"
       );

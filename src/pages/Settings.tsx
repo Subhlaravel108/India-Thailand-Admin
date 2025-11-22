@@ -39,12 +39,12 @@ const Settings = () => {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <SettingsCard
+        {/* <SettingsCard
           title="Account Settings"
           description="Manage your admin account details"
           icon={<User className="h-6 w-6 text-primary" />}
           link="/settings/account"
-        />
+        /> */}
         
         <SettingsCard
           title="Change Password"
@@ -53,24 +53,24 @@ const Settings = () => {
           link="/change-password"
         />
         
-        <SettingsCard
+        {/* <SettingsCard
           title="Site Settings"
           description="Manage website general settings"
           icon={<SettingsIcon className="h-6 w-6 text-primary" />}
           link="/settings/site"
-        />
-        <SettingsCard
+        /> */}
+        {/* <SettingsCard
           title="Api Keys"
           description="Manage website general settings"
           icon={<Key className="h-6 w-6 text-primary" />}
           link="/Api-keys"
-        />
-        <SettingsCard
+        /> */}
+        {/* <SettingsCard
           title="Social Media Settings"
           description="Manage your social media links and content"
           icon={<SettingsIcon className="h-6 w-6 text-primary" />}
           link="/settings/social-media"
-        />
+        /> */}
       </div>
     </div>
   );
