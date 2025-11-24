@@ -57,6 +57,7 @@ const ForgetPass = () => {
       setStep(3);
     } catch (err: any) {
       toast.error(err?.response?.data?.message || "Invalid OTP");
+      console.error(err?.response?.data?.message || "Invalid OTP");
     } finally {
       setLoading(false);
     }

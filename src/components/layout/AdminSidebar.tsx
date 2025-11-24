@@ -165,7 +165,7 @@ const AdminSidebar = () => {
             <>
               <button
                 onClick={() => toggleMenu(child.label)}
-                className="flex items-center justify-between w-full text-sm font-medium py-2 px-2 rounded-lg hover:bg-sidebar-accent/20 text-sidebar-foreground/80 transition-all"
+                className="flex items-center justify-between w-full text-sm font-medium py-2 px-2 rounded-lg hover:bg-sidebar-accent/20  hover:text-sidebar-foreground text-sidebar-foreground/80 transition-all"
               >
                 <span>{child.label}</span>
                 <ChevronDown
@@ -183,9 +183,9 @@ const AdminSidebar = () => {
               <Button
                 variant="ghost"
                 className={cn(
-                  "w-full justify-start text-sm pl-5 rounded-lg hover:bg-sidebar-accent/20",
+                  "w-full justify-start text-sm pl-5 rounded-lg hover:bg-sidebar-accent/20 hover:text-sidebar-foreground",
                   location.pathname === child.to &&
-                    "bg-sidebar-accent/50 text-sidebar-accent-foreground"
+                    "bg-sidebar-accent/50 hover:bg-sidebar-accent/20   text-sidebar-accent-foreground hover:text-sidebar-foreground"
                 )}
               >
                 {child.label}

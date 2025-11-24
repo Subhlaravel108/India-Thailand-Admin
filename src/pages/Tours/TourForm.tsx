@@ -551,7 +551,7 @@ function TourForm() {
                   </button>
 
                   <Input
-                    placeholder="Day (e.g., Day 1: Arrival in Paris)"
+                    placeholder="Day (e.g., Day 1)"
                     value={item.title}
                     onChange={(e) => handleItineraryChange(index, 'title', e.target.value)}
                   />
