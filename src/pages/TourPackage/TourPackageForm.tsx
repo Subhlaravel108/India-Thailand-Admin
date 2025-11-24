@@ -34,6 +34,9 @@ const TourPackageFrom = () => {
   const [shortDescription, setshortDescription] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [status, setStatus] = useState("");
+  const [meta_title, setMeta_title] = useState("");
+  const [meta_description, setMeta_description] = useState("");
+  const [meta_keywords, setMeta_keywords] = useState("");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [uploading, setUploading] = useState(false);
@@ -87,6 +90,9 @@ const TourPackageFrom = () => {
       fetchTourPackage(id)
         .then((res) => {
           setTitle(res.data?.title || "");
+          setMeta_title(res.data?.meta_title || "");
+          setMeta_description(res.data?.meta_description || "");
+          setMeta_keywords(res.data?.meta_keywords || "");
           setshortDescription(res.data?.shortDescription || "");
           setImageUrl(res.data?.imageUrl || "");
           setStatus(res.data?.status || "Draft");
@@ -116,6 +122,18 @@ const TourPackageFrom = () => {
     setStatus(value);
     clearError("status"); // Agar status ka error field hai to
   };
+  const handleMetaTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMeta_title(e.target.value);
+    clearError("meta_title"); 
+  };
+  const handleMetaDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMeta_description(e.target.value);
+    clearError("meta_description"); 
+  };
+  const handleMetaKeywordsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMeta_keywords(e.target.value);
+    clearError("meta_keywords"); 
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,6 +141,15 @@ const TourPackageFrom = () => {
     const newErrors: Record<string, string> = {};
     if (!title.trim()) {
       newErrors.title = "Package name is required";
+    }
+    if (!meta_title.trim()) {
+      newErrors.meta_title = "Meta title is required";
+    }
+    if (!meta_description.trim()) {
+      newErrors.meta_description = "Meta description is required";
+    }
+    if (!meta_keywords.trim()) {
+      newErrors.meta_keywords = "Meta keywords is required";
     }
   const plainDescription = shortDescription.replace(/<[^>]*>/g, "").trim();
 
@@ -146,6 +173,9 @@ if (!plainDescription) {
     try {
       const payload = { 
         title, 
+        meta_title, 
+        meta_description, 
+        meta_keywords,
         shortDescription, 
         imageUrl, 
         status 
@@ -207,6 +237,45 @@ if (!plainDescription) {
                     placeholder="Enter package name"
                   />
                   {errors.title && <p className="text-red-500 text-sm">{errors.title}</p>}
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <label htmlFor="meta_title" className="text-sm font-medium">
+                    Meta Title *
+                  </label>
+                  <Input
+                    id="meta_title"
+                    name="meta_title"
+                    value={meta_title}
+                    onChange={handleMetaTitleChange} // ✅ Updated handler
+                    placeholder="Enter meta title"
+                  />
+                  {errors.meta_title && <p className="text-red-500 text-sm">{errors.meta_title}</p>}
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <label htmlFor="meta_description" className="text-sm font-medium">
+                    Meta Description *
+                  </label>
+                  <Input
+                    id="meta_description"
+                    name="meta_description"
+                    value={meta_description}
+                    onChange={handleMetaDescriptionChange} // ✅ Updated handler
+                    placeholder="Enter meta description"
+                  />
+                  {errors.meta_description && <p className="text-red-500 text-sm">{errors.meta_description}</p>}
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <label htmlFor="meta_keywords" className="text-sm font-medium">
+                    Meta Keywords *
+                  </label>
+                  <Input
+                    id="meta_keywords"
+                    name="meta_keywords"
+                    value={meta_keywords}
+                    onChange={handleMetaKeywordsChange} // ✅ Updated handler
+                    placeholder="Enter meta keywords"
+                  />
+                  {errors.meta_keywords && <p className="text-red-500 text-sm">{errors.meta_keywords}</p>}
                 </div>
                 
                 {/* <div className="space-y-2 md:col-span-2">
