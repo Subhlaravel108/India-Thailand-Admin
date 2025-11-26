@@ -50,6 +50,7 @@ import DestinationForm from "./pages/destination/DestinationForm";
 import ContactList from "./pages/contact/contact";
 import Bookings from "./pages/bookings/bookingList";
 import FeedbackList from "./pages/Feedbacks/FeedbackList";
+import DownloadResources from "./pages/Download-json";
 
 const queryClient = new QueryClient();
 
@@ -132,7 +133,8 @@ const App = () => (
             <Route path="/destination/edit/:id" element={<DestinationForm/>}/>
 
           
-
+            {/* Download JSON resources */}
+            <Route path="/downloads" element={<DownloadResources />} />
           
             
             {/* Settings */}
