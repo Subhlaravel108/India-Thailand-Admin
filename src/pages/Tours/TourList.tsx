@@ -156,6 +156,7 @@ const ToursList = () => {
                   <TableHead>Hotel Type</TableHead>
                   <TableHead>People</TableHead>
                   <TableHead>Date</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -178,6 +179,17 @@ const ToursList = () => {
                       <TableCell>{tour.price}</TableCell>
                       <TableCell>{tour.hotelType}</TableCell>
                       <TableCell>{tour.people}</TableCell>
+                      <TableCell>
+                                              <span
+                                                className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                                  tour.status === "Active"
+                                                    ? "bg-green-100 text-green-800"
+                                                    : "bg-red-100 text-red-800"
+                                                }`}
+                                              >
+                                                {tour.status || "Inactive"}
+                                              </span>
+                                            </TableCell>
                       <TableCell>
                         {tour.createdAt
                           ? format(new Date(tour.createdAt), "MMM d, yyyy")

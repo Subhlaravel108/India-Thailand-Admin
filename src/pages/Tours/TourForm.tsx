@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Check, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Check, Plus, Trash2, Upload, X } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import api, { createTour, updateBlog, updateTour } from "@/lib/api";
 import { toast } from "sonner";
@@ -143,6 +143,7 @@ function TourForm() {
   const [galleryImages, setGalleryImages] = useState([]);
   const [uploadingGallery, setUploadingGallery] = useState(false);
   const [selectedDestinations, setSelectedDestinations] = useState([]);
+ const [addMoreKey, setAddMoreKey] = useState(Date.now());
 
   console.log("des id=",selectedDestinations)
 
@@ -194,16 +195,16 @@ function TourForm() {
   //   setGalleryImages(updated);
   // };
 
-  const handleAddGalleryImage = () => {
-    setGalleryImages([...galleryImages, '']);
-  };
+  // const handleAddGalleryImage = () => {
+  //   setGalleryImages([...galleryImages, '']);
+  // };
 
-  const handleRemoveGalleryImage = (index) => {
-    if (galleryImages.length > 1) {
-      const updated = galleryImages.filter((_, i) => i !== index);
-      setGalleryImages(updated);
-    }
-  };
+  // const handleRemoveGalleryImage = (index) => {
+  //   if (galleryImages.length > 1) {
+  //     const updated = galleryImages.filter((_, i) => i !== index);
+  //     setGalleryImages(updated);
+  //   }
+  // };
 
   // Included items functions
   const handleIncludedChange = (index, value) => {
@@ -279,35 +280,63 @@ function TourForm() {
     }
   };
 
-  const handleGalleryFileUpload = async (e, index) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  // Multiple gallery upload handler
+const handleMultipleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const files = e.target.files;
+  if (!files?.length) return;
 
-    setUploadingGallery(true);
+  setUploadingGallery(true);
 
-    const formDataData = new FormData();
-    formDataData.append("image", file);
-
+  const promises = Array.from(files).map(async (file) => {
     try {
-      const res = await api.post(
-        "/upload-image",
-        formDataData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
-      if (res.data.success) {
-        toast.success("Gallery image uploaded successfully!");
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error(`"${file.name}" is too large (Max 5MB)`);
+        return null;
       }
-      const updated = [...galleryImages];
-      updated[index] = res.data.imageUrl;
-      setGalleryImages(updated);
-      setErrors(prev => ({ ...prev, gallery: "" }));
-    } catch (err) {
-      console.error("Gallery Upload Failed", err);
-      toast.error("Failed to upload gallery image.");
-    } finally {
-      setUploadingGallery(false);
+
+      const valid = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+      if (!valid.includes(file.type)) {
+        toast.error(`Invalid file: ${file.name}`);
+        return null;
+      }
+
+      const fd = new FormData();
+      fd.append("image", file);
+
+      const res = await api.post("/upload-image", fd, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      return res.data.success ? res.data.imageUrl : null;
+    } catch {
+      toast.error(`Failed: ${file.name}`);
+      return null;
     }
-  };
+  });
+
+  const results = await Promise.all(promises);
+  const success = results.filter((x) => x);
+
+  if (success.length) {
+    setGalleryImages((prev) => [...prev, ...success]);
+    toast.success(`Uploaded ${success.length} of ${files.length} images`);
+  }
+
+  setUploadingGallery(false);
+  e.target.value = "";
+};
+
+// Remove gallery image
+const handleRemoveGalleryImage = (index: number) => {
+  setGalleryImages((prev) => prev.filter((_, i) => i !== index));
+  toast.success("Image removed");
+};
+
+
+// // Add empty slot for gallery (optional)
+// const handleAddGalleryImage = () => {
+//   setGalleryImages(prev => [...prev, '']);
+// };
 
   if (loading) {
     return <BlogFormSkeleton />;
@@ -616,53 +645,120 @@ function TourForm() {
 
 
             {/* GALLERY */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Gallery Images</label>
+            <div className="space-y-4">
+  <label className="text-sm font-medium text-gray-700">Gallery Images</label>
 
-              {galleryImages.map((img, index) => (
-                <div key={index} className="space-y-2 border p-2 rounded">
+  {/* Multiple File Upload Box */}
+  <div
+    className={`border-2 border-dashed rounded-xl p-6 text-center transition-all duration-200 ${
+      uploadingGallery
+        ? "border-blue-400 bg-blue-50"
+        : "border-gray-300 hover:border-blue-500 hover:bg-blue-50/40"
+    }`}
+  >
+    <input
+      type="file"
+      multiple
+      accept="image/*"
+      id="multiple-gallery-upload"
+      className="hidden"
+      onChange={handleMultipleGalleryUpload}
+      disabled={uploadingGallery}
+    />
 
-                  {/* Upload File Input */}
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleGalleryFileUpload(e, index)}
-                  />
+    <label
+      htmlFor="multiple-gallery-upload"
+      className="cursor-pointer flex flex-col items-center gap-3"
+    >
+      <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
+        {uploadingGallery ? (
+          <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+        ) : (
+          <Upload className="w-7 h-7 text-blue-600" />
+        )}
+      </div>
 
-                  {/* Loader */}
-                  {uploadingGallery && (
-                    <p className="text-blue-600 text-xs animate-pulse">Uploading...</p>
-                  )}
+      <p className="text-gray-700 font-medium">
+        {uploadingGallery ? "Uploading..." : "Click to upload multiple images"}
+      </p>
+      <p className="text-gray-500 text-sm">PNG, JPG, WebP (Max 5MB each)</p>
+    </label>
+  </div>
 
-                  {/* Preview */}
-                  {img && !uploadingGallery && (
-                    <img
-                      src={img}
-                      alt="Gallery Preview"
-                      className="w-24 h-24 rounded border object-cover"
-                    />
-                  )}
+  {/* Uploading Message */}
+  {uploadingGallery && (
+    <div className="flex items-center gap-2 bg-blue-50 p-3 rounded-lg">
+      <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+      <p className="text-blue-600 text-sm">Uploading images... Please wait</p>
+    </div>
+  )}
 
-                  {/* Remove button */}
-                  {galleryImages.length > 1 && (
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      onClick={() => handleRemoveGalleryImage(index)}
-                    >
-                      Remove
-                    </Button>
-                  )}
-                </div>
-              ))}
+  {/* Gallery Images Grid */}
+  {galleryImages.length > 0 && (
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      {galleryImages.map((img, index) => (
+        <div
+          key={index}
+          className="relative group border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition"
+        >
+          <img
+            src={img}
+            alt="Gallery"
+            className="w-full h-28 object-cover"
+          />
 
-              {/* Add More */}
-              <Button type="button" variant="outline" onClick={handleAddGalleryImage}>
-                + Add Gallery Image
-              </Button>
-              {errors.gallery && <p className="text-red-500 text-xs mt-1">{errors.gallery}</p>}
-            </div>
+          {/* Uploaded Badge */}
+          <div className="absolute top-1 left-1 bg-green-500 text-white text-xs px-2 py-0.5 rounded flex items-center gap-1">
+            <Check className="w-3 h-3" /> Uploaded
+          </div>
 
+          {/* Remove Button */}
+          <button
+            type="button"
+            onClick={() => handleRemoveGalleryImage(index)}
+            className="absolute top-1 right-1 bg-red-600 text-white w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition"
+          >
+            <X className="w-3 h-3" />
+          </button>
+
+          {/* Image Index */}
+          <div className="absolute bottom-1 left-1 bg-black/60 text-white text-xs px-1.5 py-0.5 rounded">
+            {index + 1}
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+
+  {/* Add More Button */}
+  {/* {galleryImages.length > 0 && (
+    <div className="flex justify-center mt-4">
+      <input
+        key={addMoreKey}
+        type="file"
+        multiple
+        accept="image/*"
+        id="add-more-images"
+        className="hidden"
+           onChange={(e) => {
+        handleMultipleGalleryUpload(e);
+        setAddMoreKey(Date.now()); // force-remount input
+      }}
+      />
+
+      <label htmlFor="add-more-images">
+        <Button variant="outline" className="flex items-center gap-2">
+          <Plus className="w-4 h-4" />
+          Add More Images
+        </Button>
+      </label>
+    </div>
+  )} */}
+
+  {errors.gallery && (
+    <p className="text-red-500 text-xs mt-1">{errors.gallery}</p>
+  )}
+</div>
 
             {/* NUMBERS */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
