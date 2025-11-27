@@ -380,12 +380,12 @@ const handleRemoveGalleryImage = (index: number) => {
     if (!formData.tour_duration?.trim()) {
       errors.tour_duration = "Tour duration is required";
     }
-    if (!formData.price) {
-      errors.price = "Price is required";
-    }
-    else if(!Number(formData.price) ){
-        errors.price="Price must be a number" 
-    }
+    // if (!formData.price) {
+    //   errors.price = "Price is required";
+    // }
+    // else if(!Number(formData.price) ){
+    //     errors.price="Price must be a number" 
+    // }
     if (!formData.people?.trim()) {
       errors.people = "People count is required";
     }
@@ -790,7 +790,7 @@ const handleRemoveGalleryImage = (index: number) => {
                   value={formData.price}
                   onChange={(e) => handleInputChange('price', e.target.value)}
                 />
-                {errors.price && <p className="text-red-500 text-xs mt-1">{errors.price}</p>}
+                {/* {errors.price && <p className="text-red-500 text-xs mt-1">{errors.price}</p>} */}
               </div>
 
               <div className="space-y-2">

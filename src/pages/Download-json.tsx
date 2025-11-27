@@ -4,16 +4,15 @@ import React, { useState } from "react";
 import { toast } from "sonner";
 
 const BASE_URL = "https://india-thailand-api-8.onrender.com";
+// const BASE_URL = " http://127.0.0.1:3001";
 
 const DownloadDataPage = () => {
-  // 🔹 Loading state per item index
   const [loadingIndex, setLoadingIndex] = useState(null);
 
   const downloadFile = async (url, filename, index) => {
     try {
       setLoadingIndex(index);
 
-      // 🔐 Token check
       const token =
         JSON.parse(localStorage.getItem("user") || "{}")?.token || "";
 
@@ -22,7 +21,6 @@ const DownloadDataPage = () => {
         return;
       }
 
-      // 🔹 Fetching with Authorization
       const response = await fetch(BASE_URL + url, {
         method: "GET",
         headers: {
@@ -35,7 +33,6 @@ const DownloadDataPage = () => {
         return;
       }
 
-      // Convert blob → file
       const blob = await response.blob();
 
       const link = document.createElement("a");
@@ -54,51 +51,88 @@ const DownloadDataPage = () => {
 
   const items = [
     {
-      title: "Destinations",
+      title: "Home Page Destinations",
       description: "Download home page destinations JSON.",
-      url: "/api/destinations?download=true&limit=6",
-      file: "destinations.json",
+      url: "/api/destinations?download=true&type=homepage&limit=6",
+      file: "destinations_homepage.json",
     },
     {
-      title: "Packages",
+      title: "Home Page Packages",
       description: "Download home page packages JSON.",
-      url: "/api/package?download=true&limit=3",
-      file: "packages.json",
+      url: "/api/package?download=true&type=homepage&limit=3",
+      file: "packages_homepage.json",
     },
     {
-      title: "Blogs",
-      description: "Download home page blogs JSON.",
-      url: "/api/blog?download=true&limit=3",
-      file: "blogs.json",
+      title: "Home Page Blog",
+      description: "Download home page blog JSON.",
+      url: "/api/blog?download=true&type=homepage&limit=3",
+      file: "blog_homepage.json",
     },
+    {
+      title: "All Destinations",
+      description: "Download all destinations JSON.",
+      url: "/api/destinations?download=true",
+      file: "all_destinations.json",
+    },
+    {
+      title: "All Packages",
+      description: "Download All packages JSON.",
+      url: "/api/package?download=true",
+      file: "all_packages.json",
+    },
+     {
+      title: "All Blog",
+      description: "Download all blog JSON.",
+      url: "/api/blog?download=true",
+      file: "all_blog.json",
+    },
+   
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-      <div className="max-w-4xl w-full bg-white shadow-lg rounded-xl p-8">
+    <div className="h-auto bg-gray-100 flex  justify-center p-6">
+      <div className="max-w-6xl w-full bg-white shadow-lg rounded-xl p-8">
         <h1 className="text-2xl font-bold text-center mb-6 text-blue-600">
           Download Website Data
         </h1>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          {items.map((item, index) => (
-            <div
-              key={index}
-              className="border p-5 rounded-lg shadow-sm bg-gray-50 hover:shadow-md transition"
-            >
-              <h2 className="text-lg font-semibold mb-2">{item.title}</h2>
-              <p className="text-gray-600 mb-4 text-sm">{item.description}</p>
+        {/* TABLE START */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border border-gray-300 rounded-lg overflow-hidden">
+            <thead className="bg-gray-100 border-b">
+              <tr>
+                <th className="px-4 py-3 text-sm font-semibold text-gray-700">#</th>
+                <th className="px-4 py-3 text-sm font-semibold text-gray-700">Title</th>
+                <th className="px-4 py-3 text-sm font-semibold text-gray-700">Description</th>
+                <th className="px-4 py-3 text-sm font-semibold text-gray-700 text-center">Action</th>
+              </tr>
+            </thead>
 
-              <button
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 w-full flex justify-center"
-                onClick={() => downloadFile(item.url, item.file, index)}
-                disabled={loadingIndex === index}
-              >
-                {loadingIndex === index ? <Loader className="animate-spin" /> : "Download JSON"}
-              </button>
-            </div>
-          ))}
+            <tbody>
+              {items.map((item, index) => (
+                <tr key={index} className="border-b hover:bg-gray-50">
+                  <td className="px-4 py-3">{index + 1}</td>
+                  <td className="px-4 py-3 font-medium">{item.title}</td>
+                  <td className="px-4 py-3 text-sm text-gray-600">{item.description}</td>
+                  <td className="px-4 py-3 text-center">
+                    <button
+                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex justify-center mx-auto"
+                      onClick={() => downloadFile(item.url, item.file, index)}
+                      disabled={loadingIndex === index}
+                    >
+                      {loadingIndex === index ? (
+                        <Loader className="animate-spin" size={18} />
+                      ) : (
+                        "Download JSON"
+                      )}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
+        {/* TABLE END */}
       </div>
     </div>
   );

@@ -55,6 +55,7 @@ const BlogForm = () => {
     content: "",
     featuredImage: "",
     publishDate: null as Date | null,
+    showingOnHomePage: false,
     status: "Draft",
     tags: "",
     meta_title: "",
@@ -99,6 +100,7 @@ const BlogForm = () => {
             content: data.content || "",
             featuredImage: data.featuredImage || "",
             publishDate: data.published_at ? new Date(data.published_at) : null,
+            showingOnHomePage: data.showingOnHomePage || false,
             status: data.status,
             tags: Array.isArray(data.tags)
               ? data.tags.join(", ")
@@ -129,7 +131,7 @@ const BlogForm = () => {
     }))
   };
 
-  const handleSelectChange = (name: string, value: string) => {
+  const handleSelectChange = (name: string, value: string|boolean) => {
     setBlog((prevBlog) => ({ ...prevBlog, [name]: value }));
     setErrors(prev => ({
       ...prev,
@@ -205,6 +207,7 @@ const BlogForm = () => {
       gallery_images: [], // Add support if you want
       categoryId: blog.categoryId,
       tags: blog.tags.split(",").map((t) => t.trim()).filter(Boolean),
+      showingOnHomePage: blog.showingOnHomePage,
       status: blog.status,
       published_at: blog.publishDate ? blog.publishDate.toISOString().slice(0, 19).replace("T", " ") : null,
     };
@@ -322,6 +325,7 @@ const BlogForm = () => {
                   </Select>
                   {errors.status && <p className="text-sm text-red-500">{errors.status}</p>}
                 </div>
+               
                 <div className="space-y-2">
                   <label htmlFor="publishDate" className="text-sm font-medium">
                     Publish Date
@@ -368,7 +372,24 @@ const BlogForm = () => {
                   />
                   {errors.tags && <p className="text-sm text-red-500">{errors.tags}</p>}
                 </div>
-                <div className="space-y-2 md:col-span-2">
+                 <div className="space-y-2 ">
+                  <label htmlFor="showingOnHomePage" className="text-sm font-medium">
+                    Showing on Home Page
+                  </label>
+                  <Select
+                    value={blog.showingOnHomePage ? "Yes" : "No"}
+                    onValueChange={(value) => handleSelectChange("showingOnHomePage", value === "Yes" ? true : false)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select option" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Yes">Yes</SelectItem>
+                      <SelectItem value="No">No</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
                   <label htmlFor="featuredImage" className="text-sm font-medium">
                     Featured Image
                   </label>
@@ -396,6 +417,7 @@ const BlogForm = () => {
                   )}
                   {errors.featuredImage && <p className="text-sm text-red-500">{errors.featuredImage}</p>}
                 </div>
+
                 <div className="space-y-2 md:col-span-2">
                   <label htmlFor="summary" className="text-sm font-medium">
                     Summary

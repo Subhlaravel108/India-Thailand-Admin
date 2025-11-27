@@ -38,6 +38,7 @@ const DestinationForm = () => {
     meta_title: "",
     meta_description: "",
     meta_keywords: "",
+    showingOnHomePage:false,
     status: "Active",
   });
 
@@ -65,6 +66,7 @@ const DestinationForm = () => {
             meta_title: data.meta_title || "",
             meta_description: data.meta_description || "",
             meta_keywords: data.meta_keywords || "",
+            showingOnHomePage:data.showingOnHomePage||false,
             status: data.status || "Active",
           });
         } catch (error) {
@@ -91,7 +93,7 @@ const DestinationForm = () => {
     clearError(name);
   };
 
-  const handleSelectChange = (name: string, value: string) => {
+  const handleSelectChange = (name: string, value: string|boolean) => {
     setDestination(prev => ({ ...prev, [name]: value }));
     clearError(name);
   };
@@ -178,6 +180,7 @@ const DestinationForm = () => {
       meta_title: destination.meta_title,
       meta_description: destination.meta_description,
       meta_keywords: destination.meta_keywords,
+      showingOnHomePage:destination.showingOnHomePage,
       status: destination.status,
     };
 
@@ -224,7 +227,7 @@ const DestinationForm = () => {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Basic Information */}
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            
               <div className="space-y-2">
                 <label htmlFor="title" className="text-sm font-medium">
                   Destination Title *
@@ -239,6 +242,8 @@ const DestinationForm = () => {
                 {errors.title && <p className="text-sm text-red-500">{errors.title}</p>}
               </div>
 
+
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <label htmlFor="status" className="text-sm font-medium">
                   Status
@@ -253,6 +258,26 @@ const DestinationForm = () => {
                   <SelectContent>
                     <SelectItem value="Active">Active</SelectItem>
                     <SelectItem value="Inactive">Inactive</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            
+
+            {/* showingOnHomePage */}
+            <div className="space-y-2">
+                <label htmlFor="showingOnHomePage" className="text-sm font-medium">
+                  Show on Homepage
+                </label>
+                <Select
+                  value={destination.showingOnHomePage ? "Yes" : "No"}
+                  onValueChange={(value) => handleSelectChange("showingOnHomePage", value === "Yes" ? true : false)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select option" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Yes">Yes</SelectItem>
+                    <SelectItem value="No">No</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

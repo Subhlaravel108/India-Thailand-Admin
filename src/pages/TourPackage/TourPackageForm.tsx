@@ -34,6 +34,7 @@ const TourPackageFrom = () => {
   const [shortDescription, setshortDescription] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [status, setStatus] = useState("");
+  const [showingOnHomePage, setShowingOnHomePage] = useState(false);
   const [meta_title, setMeta_title] = useState("");
   const [meta_description, setMeta_description] = useState("");
   const [meta_keywords, setMeta_keywords] = useState("");
@@ -95,6 +96,7 @@ const TourPackageFrom = () => {
           setMeta_keywords(res.data?.meta_keywords || "");
           setshortDescription(res.data?.shortDescription || "");
           setImageUrl(res.data?.imageUrl || "");
+          setShowingOnHomePage(res.data?.showingOnHomePage || false);
           setStatus(res.data?.status || "Draft");
         })
         .catch(() => {
@@ -134,6 +136,11 @@ const TourPackageFrom = () => {
     setMeta_keywords(e.target.value);
     clearError("meta_keywords"); 
   };
+
+  const handldeShowingOnHomePageChange = (value:boolean) => {
+    setShowingOnHomePage(value);
+    clearError("showingOnHomePage"); 
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -178,6 +185,7 @@ if (!plainDescription) {
         meta_keywords,
         shortDescription, 
         imageUrl, 
+        showingOnHomePage,
         status 
       };
       
@@ -307,6 +315,26 @@ if (!plainDescription) {
                                   {errors.shortDescription && <p className="text-sm text-red-500">{errors.shortDescription}</p>}
                                 </div>
 
+
+
+                <div className="space-y-2 md:col-span-2">
+                  <label htmlFor="showingOnHomePage" className="text-sm font-medium">
+                    Showing on Home Page
+                  </label>
+                  <Select
+                    value={showingOnHomePage ? "true" : "false"}
+                    onValueChange={(value) => handldeShowingOnHomePageChange(value === "true")} // ✅ Updated handler
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select option" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="false">False</SelectItem>
+                      <SelectItem value="true">True</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {errors.showingOnHomePage && <p className="text-red-500 text-sm">{errors.showingOnHomePage}</p>}
+                </div>
                 <div className="space-y-2 md:col-span-2">
                   <label htmlFor="status" className="text-sm font-medium">
                     Status
