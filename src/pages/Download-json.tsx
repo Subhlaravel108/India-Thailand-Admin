@@ -57,8 +57,8 @@ const DownloadDataPage = () => {
       file: "destinations_homepage.json",
     },
     {
-      title: "Home Page Packages",
-      description: "Download home page packages JSON.",
+      title: "Home Page tour Packages",
+      description: "Download home page tour packages JSON.",
       url: "/api/package?download=true&type=homepage&limit=3",
       file: "packages_homepage.json",
     },
@@ -75,8 +75,8 @@ const DownloadDataPage = () => {
       file: "all_destinations.json",
     },
     {
-      title: "All Packages",
-      description: "Download All packages JSON.",
+      title: "All tour Packages",
+      description: "Download All tour packages JSON.",
       url: "/api/package?download=true",
       file: "all_packages.json",
     },
@@ -85,6 +85,12 @@ const DownloadDataPage = () => {
       description: "Download all blog JSON.",
       url: "/api/blog?download=true",
       file: "all_blog.json",
+    },
+     {
+      title: "All Tour",
+      description: "Download all tour JSON.",
+      url: "/api/tours?download=true",
+      file: "all_tours.json",
     },
    
   ];
