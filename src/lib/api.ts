@@ -2,8 +2,8 @@ import axios from "axios";
 // import { URLSearchParams } from "url";
 
 const api = axios.create({
-  baseURL: "http://127.0.0.1:3001/api/",
-  // baseURL: "https://india-thailand-api-8.onrender.com/api/",
+  // baseURL: "http://127.0.0.1:3001/api/",
+  baseURL: "https://india-thailand-api-8.onrender.com/api/",
 });
 
 export default api;
