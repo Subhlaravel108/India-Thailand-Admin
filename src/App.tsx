@@ -34,9 +34,10 @@ import Settings from "./pages/Settings";
 // import UpdateApiKey from "./pages/ApiKeys/UpdateViatorApiKey";
 
 // categories
-import CategoriesList from "./pages/Categories/CategoryList";
-import CategoryForm from "./pages/Categories/CategoryForm";
-
+import BlogCategoryForm from "./pages/BlogCategory/CategoryForm";
+import BlogCategoryList from "./pages/BlogCategory/CategoryList";
+import ProductCategoryForm from "./pages/ProductCategory/CategoryForm";
+import ProductCategoryList from "./pages/ProductCategory/CategoryList";
 // NotFound
 import NotFound from "./pages/NotFound";
 
@@ -45,8 +46,8 @@ import TourList from "./pages/Tours/TourList";
 import TourForm from "./pages/Tours/TourForm";
 import TourPackageList from "./pages/TourPackage/TourPackageList";
 import TourPackageForm from "./pages/TourPackage/TourPackageForm";
-import DestinationList from "./pages/destination/DestinationList";
-import DestinationForm from "./pages/destination/DestinationForm";
+import ProductForm  from "./pages/products/ProductForm";
+import ProductList from "./pages/products/ProductList";
 import ContactList from "./pages/contact/contact";
 import Bookings from "./pages/bookings/bookingList";
 import FeedbackList from "./pages/Feedbacks/FeedbackList";
@@ -122,15 +123,20 @@ const App = () => (
             <Route path="/feedbacks" element={<FeedbackList/>}/>
 
 
-             {/* Categories routes */}
-            <Route path="/blogs/categories" element={<CategoriesList />} />
-            <Route path="/blogs/categories/add" element={<CategoryForm />} />
-            <Route path="/blogs/categories/edit/:id" element={<CategoryForm />} />
+             {/*blog Categories routes */}
+            <Route path="/blogs/categories" element={<BlogCategoryList />} />
+            <Route path="/blogs/categories/add" element={<BlogCategoryForm />} />
+            <Route path="/blogs/categories/edit/:id" element={<BlogCategoryForm />} />
+
+             {/*product Categories routes */}
+            <Route path="/products/categories" element={<ProductCategoryList />} />
+            <Route path="/products/category/add" element={<ProductCategoryForm />} />
+            <Route path="/products/category/edit/:slug" element={<ProductCategoryForm />} />
 
             {/* Destination routes */}
-            <Route path="/destination" element={<DestinationList/>}/>
-            <Route path="/destination/add" element={<DestinationForm/>}/>
-            <Route path="/destination/edit/:id" element={<DestinationForm/>}/>
+            <Route path="/products" element={<ProductList/>}/>
+            <Route path="/product/add" element={<ProductForm/>}/>
+            <Route path="/product/edit/:slug" element={<ProductForm/>}/>
 
           
             {/* Download JSON resources */}
