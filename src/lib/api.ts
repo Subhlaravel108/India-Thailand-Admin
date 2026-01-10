@@ -2,8 +2,8 @@ import axios from "axios";
 // import { URLSearchParams } from "url";
 
 const api = axios.create({
-  // baseURL: "https://api.jewtone.com/api/v1",
-  baseURL: "https://india-thailand-api-8.onrender.com/api/",
+  // baseURL: "http://localhost:3001/api",
+  baseURL: "https://womenica-api.onrender.com/api",
 });
 
 export default api;
@@ -28,6 +28,206 @@ export const loginApi = async (email: string, password: string) => {
 
   return response;
 };
+
+// product category APIs
+ 
+
+
+export const productCategoryFetchList = async ({ page = 1, search = "" } = {}) => {
+  // const token =
+    // JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
+
+  const response = await api.get(`/product-categories?`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    params: {
+      page,
+      search: search || undefined, // will exclude `name` if search is empty
+    },
+  });
+
+  return response.data;
+};
+
+
+export const productDeleteCategory = async (id: string) => {
+  // const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
+  console.log("deleting category with id:", id);
+  const response = await api.delete(
+    `/product-categories/delete/${id}`,
+    {
+      headers: {
+        Accept: "application/json", 
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data;
+}
+
+
+export const productCategoryCreate = async (payload: any) => {
+  // const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
+  const response = await api.post(
+    "/product-categories/add",
+    payload,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+    }
+  );
+  return response.data;
+};
+
+
+export const fetchProductCategory = async (slugOrId: string) => {
+ 
+
+  const response = await api.get(`/product-categories/${slugOrId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+};
+
+
+export const updateProductCategory = async (slugOrId: string, payload: any) => {
+  // const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
+  // console.log("payloag=",payload)
+  const response = await api.put( 
+    `/product-categories/update/${slugOrId}`,
+    payload,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+    }
+  );
+  return response.data;
+}
+
+
+
+
+// product Apis
+
+export const fetchProduct=async(SlugOrId:string)=>{
+    const response=await api.get(`/product/${SlugOrId}`,{
+      headers:{
+        Authorization:`Bearer ${token}`
+      }
+    })
+    return response.data
+}
+
+
+export const createProduct=async(payload:any)=>{
+  const response=await api.post("/products/add",payload,{
+    headers:{
+      Authorization:`Bearer ${token}`
+    }
+  })
+  return response.data
+}
+
+export const updateProduct=async(SlugOrId:string,payload:any)=>{
+  const response=await api.put(`/product/update/${SlugOrId}`,payload,{
+    headers:{
+      Authorization:`Bearer ${token}`
+    }
+  })
+  return response.data
+}
+
+
+export const fetchProducts=async({page=1,search=""}={})=>{
+      const response = await api.get(`/products?`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    params: {
+      page,
+      search: search || undefined, // will exclude `name` if search is empty
+    },
+  });
+  return response.data
+}
+
+
+export const deleteProduct=async(SlugOrId:string)=>{
+  const response=await api.delete(`/product/delete/${SlugOrId}`,{
+    headers:{
+      Authorization:`Bearer ${token}`
+    }
+  })
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export const requestOtp = async (email: string) => {
   const formData = new FormData();
@@ -204,7 +404,28 @@ export const ChangeFeedbackStatus = async ({
   return response.data;
 };
 
-// Category APIs
+//product category APIs
+
+
+// blog Category APIs
+
+
+
+
+export const categoryCreate = async (payload: any) => {
+  // const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
+  const response = await api.post(
+    "/blog-category",
+    payload,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+    }
+  );
+  return response.data;
+};
+
 
 export const categoryFetchList = async ({ page = 1, search = "" } = {}) => {
   // const token =
@@ -231,19 +452,7 @@ export const fetchAllCategories = async () => {
   return res.data;
 };
 
-export const categoryCreate = async (payload: any) => {
-  // const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
-  const response = await api.post(
-    "/blog-category",
-    payload,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
-    }
-  );
-  return response.data;
-};
+
 
 export const fetchCategory = async (slugOrId: string) => {
  
@@ -291,35 +500,12 @@ export const deleteCategory = async (id: string) => {
 
 // other APIs
 
-export const fetchDestination=async(SlugOrId:string)=>{
-    const response=await api.get(`/destination/${SlugOrId}`,{
-      headers:{
-        Authorization:`Bearer ${token}`
-      }
-    })
-    return response.data
-}
 
-export const createDestination=async(payload:any)=>{
-  const response=await api.post("destination",payload,{
-    headers:{
-      Authorization:`Bearer ${token}`
-    }
-  })
-  return response.data
-}
 
-export const updateDestination=async(SlugOrId:string,payload:any)=>{
-  const response=await api.put(`/destination/${SlugOrId}`,payload,{
-    headers:{
-      Authorization:`Bearer ${token}`
-    }
-  })
-  return response.data
-}
+
 
 export const fetchDestinations=async({page=1,search=""}={})=>{
-      const response = await api.get(`/destinations?`, {
+      const response = await api.get(`/products?`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -331,13 +517,8 @@ export const fetchDestinations=async({page=1,search=""}={})=>{
   return response.data
 }
 
-export const deleteDestination=async(SlugOrId:string)=>{
-  const response=await api.delete(`destination/${SlugOrId}`,{
-    headers:{
-      Authorization:`Bearer ${token}`
-    }
-  })
-}
+
+
 
 export const fetchBlogs = async ({ page = 1, search = "" } = {}) => {
   // const token = JSON.parse(localStorage.getItem("user") || "{}")?.token || "";

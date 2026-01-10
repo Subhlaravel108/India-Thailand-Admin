@@ -30,9 +30,9 @@ const Login = () => {
 
 try {
   const res = await loginApi(username, password);
-  const user = res.data.data; // ✅ correct extract
+  const user = res.data.user; // ✅ correct extract
   const role = user.role;
-  //  console.log("Logged in user:", user); // Debugging line
+  console.log("Logged in user:", role); // Debugging line
   if (role === "admin" || role === "super admin") {
     localStorage.setItem("isAuthenticated", "true");
     localStorage.setItem("user", JSON.stringify(user));
