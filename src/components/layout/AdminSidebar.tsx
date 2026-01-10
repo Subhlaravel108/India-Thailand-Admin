@@ -120,49 +120,36 @@ const AdminSidebar = () => {
     },
     {
       icon: MapPin,
-      label: "Product Management",
-      to: "/products",
-      children: [
-        {
-          label: "Products",
+      label: "Destination",
+      to: "/destination",
           children: [
-
-            { label: "Product Form", to: "/product/add" },
-            { label: "Products List", to: "/products" },
-          ]
-        },
-        {
-          label:"Category",
-          children:[
-            {label:"Category Form", to:"products/category/add"},
-            {label:"Category List", to:"products/categories"},
-          ]
-        }
-      ],
-
-
-    },
-    {
-      icon: FileText,
-      label: "Blog Management",
-      to: "/blogs",
-      children: [
-        {
-          label: "Blog",
-          children: [
-            { label: "Add Blog", to: "/blogs/add" },
-            { label: "Blog List", to: "/blogs" },
+            { label: "Add Destination", to: "/destination/add" },
+            { label: "Destination List", to: "/destination" },
           ],
-        },
-        {
-          label: "Blog Categories",
-          children: [
-            { label: "Add Blog Category", to: "/blogs/categories/add" },
-            { label: "Category List", to: "/blogs/categories" },
-          ],
-        },
-      ],
+
+      
     },
+      {
+    icon: FileText,
+    label: "Blog Management",
+    to: "/blogs",
+    children: [
+      {
+        label: "Blog",
+        children: [
+          { label: "Add Blog", to: "/blogs/add" },
+          { label: "Blog List", to: "/blogs" },
+        ],
+      },
+      {
+        label: "Blog Categories",
+        children: [
+          { label: "Add Blog Category", to: "/blogs/categories/add" },
+          { label: "Category List", to: "/blogs/categories" },
+        ],
+      },
+    ],
+  },
     { icon: Users, label: "Users", to: "/users" },
     { icon: Contact, label: "Bookings", to: "/bookings" },
     { icon: StarIcon, label: "Feedbacks", to: "/feedbacks" },
@@ -200,7 +187,7 @@ const AdminSidebar = () => {
                 className={cn(
                   "w-full justify-start text-sm pl-5 rounded-lg hover:bg-sidebar-accent/20 hover:text-sidebar-foreground",
                   location.pathname === child.to &&
-                  "bg-sidebar-accent/50 hover:bg-sidebar-accent/20   text-sidebar-accent-foreground hover:text-sidebar-foreground"
+                    "bg-sidebar-accent/50 hover:bg-sidebar-accent/20   text-sidebar-accent-foreground hover:text-sidebar-foreground"
                 )}
               >
                 {child.label}
@@ -238,12 +225,12 @@ const AdminSidebar = () => {
             <div className="flex h-12 items-center">
               <Link to="/dashboard" className="flex items-center gap-3 flex-1">
                 <span className="bg-sidebar-primary text-white p-2 rounded-xl shadow">
-                  W
+                  J-T
                 </span>
                 {!isCollapsed && (
                   <div>
                     <h1 className="text-base font-semibold tracking-wide">
-                      Womenica
+                      Jaipur-Thailand
                     </h1>
                     <p className="text-xs opacity-70">Admin Portal</p>
                   </div>
@@ -316,7 +303,7 @@ const AdminSidebar = () => {
 
           {/* Footer */}
           <div className="p-4 border-t border-sidebar-border/30 text-xs opacity-70 text-center">
-            {!isCollapsed && "Womenica Admin v1.0"}
+            {!isCollapsed && "Jaipur-Thailand Admin v1.0"}
           </div>
         </div>
       </div>
