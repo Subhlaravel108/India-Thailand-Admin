@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { fetchUsers, ChangeUserStatus } from "@/lib/api";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -17,11 +18,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Eye, Loader2, Search } from "lucide-react";
+import { Eye, Loader2, Search, UserPlus } from "lucide-react";
 import { format } from "date-fns";
 import Swal from "sweetalert2";
 
 const UsersList = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -94,6 +96,10 @@ const UsersList = () => {
     <div className="space-y-6 p-6">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl font-bold tracking-tight">Users</h1>
+        <Button onClick={() => navigate("/users/create-cc-user")}>
+          <UserPlus className="mr-2 h-4 w-4" />
+          Create CC User
+        </Button>
       </div>
 
       <Card className="p-4 shadow-md">

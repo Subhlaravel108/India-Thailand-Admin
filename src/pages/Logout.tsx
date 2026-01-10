@@ -8,7 +8,8 @@ const Logout = () => {
 
   useEffect(() => {
     const logout = async () => {
-      const storedUser = JSON.parse(localStorage.getItem("duser") || '{}');
+    
+      const storedUser = JSON.parse(localStorage.getItem("user") || '{}');
       const token = storedUser.access_token;
 
       try {
@@ -28,6 +29,7 @@ const Logout = () => {
       } finally {
         localStorage.removeItem("isAuthenticated");
         localStorage.removeItem("user");
+      
         toast.success("Logged out successfully");
         navigate("/");
       }

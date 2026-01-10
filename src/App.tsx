@@ -25,6 +25,7 @@ import BlogForm from "./pages/Blogs/BlogForm";
 
 // Bookings and contacts and Users
 import UsersList from "./pages/Users/UsersList";
+import CreateCCUser from "./pages/Users/CreateCCUser";
 
 
 // Settings
@@ -50,6 +51,7 @@ import DestinationForm from "./pages/destination/DestinationForm";
 import ContactList from "./pages/contact/contact";
 import Bookings from "./pages/bookings/bookingList";
 import FeedbackList from "./pages/Feedbacks/FeedbackList";
+import AllInquiries from "./pages/inquiries/AllInquiries";
 import DownloadResources from "./pages/Download-json";
 
 const queryClient = new QueryClient();
@@ -68,6 +70,18 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   if (!isAuthenticated) {
     return <Navigate to="/" replace />;
+  }
+
+  // Role-based route protection
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const userRole = user.role || "";
+  
+  // Define allowed routes for cc_user
+  const allowedRoutesForCCUser = ["/all-inquiries", "/logout"];
+  
+  // If cc_user tries to access non-inquiry pages, redirect to inquiries
+  if (userRole === "cc_user" && !allowedRoutesForCCUser.includes(location.pathname)) {
+    return <Navigate to="/all-inquiries" replace />;
   }
 
   return <>{children}</>;
@@ -116,10 +130,12 @@ const App = () => (
             
             {/* Bookings, contacts and users routes */}
             <Route path="/users" element={<UsersList />} />
+            <Route path="/users/create-cc-user" element={<CreateCCUser />} />
 
             <Route path="/contacts" element={<ContactList/>}/>
             <Route path="/bookings" element={<Bookings/>}/>
             <Route path="/feedbacks" element={<FeedbackList/>}/>
+            <Route path="/all-inquiries" element={<AllInquiries/>}/>
 
 
              {/* Categories routes */}

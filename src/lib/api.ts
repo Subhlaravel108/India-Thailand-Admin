@@ -2,8 +2,8 @@ import axios from "axios";
 // import { URLSearchParams } from "url";
 
 const api = axios.create({
-  // baseURL: "https://api.jewtone.com/api/v1",
-  baseURL: "https://india-thailand-api-8.onrender.com/api/",
+  baseURL: "http://127.0.0.1:3001/api/",
+  // baseURL: "https://india-thailand-api-8.onrender.com/api/",
 });
 
 export default api;
@@ -110,15 +110,35 @@ export const changePassword = async (payload: {
 // End of Login Apis
 
 //User Apis
-export const fetchUsers = async ({ page = 1, search = "" } = {}) => {
-  // const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
-  let url = `/users`;
-  if (search) url += `&search=${encodeURIComponent(search)}`;
+// export const fetchUsers = async ({ page = 1, search = "" } = {}) => {
+//   // const token = JSON.parse(localStorage.getItem("duser") || "{}")?.access_token || "";
+//   let url = `/users`;
+//   if (search) url += `&search=${encodeURIComponent(search)}`;
+//   const res = await api.get(url, {
+//     headers: { Authorization: `Bearer ${token}` }
+//   });
+//   return res.data;
+// };
+
+
+export const fetchUsers = async ({ page = 1, limit = 10, search = "" } = {}) => {
+  // const token = JSON.parse(localStorage.getItem("user") || "{}")?.accetoken;
+
+  let url = `/admin/cc-users?page=${page}&limit=${limit}`;
+
+  if (search) {
+    url += `&search=${encodeURIComponent(search)}`;
+  }
+
   const res = await api.get(url, {
-    headers: { Authorization: `Bearer ${token}` }
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
+
   return res.data;
 };
+
 
 export const ChangeUserStatus = async ({
   user_id,
@@ -132,6 +152,26 @@ export const ChangeUserStatus = async ({
   const response = await api.post(
     `/auth/user/status/${user_id}`,
     { status },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data;
+};
+
+export const createCCUser = async (payload: {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  status?: string;
+}) => {
+  const response = await api.post(
+    "/auth/admin/create-cc-user",
+    payload,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -181,6 +221,81 @@ export const fetchFeedbacks=async({page=1,search=""}={})=>{
   })
   return res.data
 }
+
+export const fetchAllInquiries=async({page=1,search=""}={})=>{
+  const res=await api.get("/all-inquiries",{
+    headers:{
+      Authorization:`Bearer ${token}`
+    },
+    params:{
+      page,
+      search 
+    }
+  })
+  return res.data
+}
+
+export const changeInquiryStatus = async ({
+  inquiry_id,
+  status,
+  source
+}: {
+  inquiry_id: string;
+  status: string;
+  source: string; // booking / contact / service
+}) => {
+  const token = JSON.parse(localStorage.getItem("user") || "{}")?.token || "";
+  const response = await api.patch(
+    `/cc/update-status/${inquiry_id}`,
+    { status, source },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data;
+};
+
+export const sendInquiryMessage = async ({
+  inquiry_id,
+  message,
+}: {
+  inquiry_id: string;
+  message: string;
+}) => {
+  const token = JSON.parse(localStorage.getItem("user") || "{}")?.token || "";
+  const response = await api.post(
+    `/inquiry/message/${inquiry_id}`,
+    { message },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data;
+};
+
+export const assignInquiry = async ({
+  inquiry_id,
+  source,
+}: {
+  inquiry_id: string;
+  source: string; // booking / contact / service
+}) => {
+  const token = JSON.parse(localStorage.getItem("user") || "{}")?.token || "";
+  const response = await api.patch(
+    `/cc/assign/${inquiry_id}`,
+    { source },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data;
+};
 
 export const ChangeFeedbackStatus = async ({
   feedback_id,

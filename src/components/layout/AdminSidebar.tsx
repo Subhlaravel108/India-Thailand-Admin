@@ -22,6 +22,7 @@ import {
   Contact,
   StarIcon,
   Download,
+  MessageSquare,
 } from "lucide-react";
 
 type MenuChild = {
@@ -72,6 +73,7 @@ const AdminSidebar = () => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(true);
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
+  const [userRole, setUserRole] = useState<string>("");
   const [isCollapsed, setIsCollapsed] = useState<boolean>(() => {
     try {
       const saved = localStorage.getItem(COLLAPSE_KEY);
@@ -80,6 +82,12 @@ const AdminSidebar = () => {
       return false;
     }
   });
+
+  // Get user role
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    setUserRole(user.role || "");
+  }, []);
 
   const toggleMenu = (label: string) => {
     setOpenMenus((prev) => ({ ...prev, [label]: !prev[label] }));
@@ -93,10 +101,9 @@ const AdminSidebar = () => {
     );
   }, [isCollapsed]);
 
-  const menuItems: MenuItem[] = [
+  // Menu items - filtered based on role
+  const allMenuItems: MenuItem[] = [
     { icon: Home, label: "Dashboard", to: "/dashboard" },
-
-
     {
       icon: Car,
       label: "Tour Management",
@@ -122,42 +129,58 @@ const AdminSidebar = () => {
       icon: MapPin,
       label: "Destination",
       to: "/destination",
-          children: [
-            { label: "Add Destination", to: "/destination/add" },
-            { label: "Destination List", to: "/destination" },
-          ],
-
-      
+      children: [
+        { label: "Add Destination", to: "/destination/add" },
+        { label: "Destination List", to: "/destination" },
+      ],
     },
-      {
-    icon: FileText,
-    label: "Blog Management",
-    to: "/blogs",
-    children: [
-      {
-        label: "Blog",
-        children: [
-          { label: "Add Blog", to: "/blogs/add" },
-          { label: "Blog List", to: "/blogs" },
-        ],
-      },
-      {
-        label: "Blog Categories",
-        children: [
-          { label: "Add Blog Category", to: "/blogs/categories/add" },
-          { label: "Category List", to: "/blogs/categories" },
-        ],
-      },
-    ],
-  },
-    { icon: Users, label: "Users", to: "/users" },
+    {
+      icon: FileText,
+      label: "Blog Management",
+      to: "/blogs",
+      children: [
+        {
+          label: "Blog",
+          children: [
+            { label: "Add Blog", to: "/blogs/add" },
+            { label: "Blog List", to: "/blogs" },
+          ],
+        },
+        {
+          label: "Blog Categories",
+          children: [
+            { label: "Add Blog Category", to: "/blogs/categories/add" },
+            { label: "Category List", to: "/blogs/categories" },
+          ],
+        },
+      ],
+    },
+    {
+      icon: Users,
+      label: "Users Management",
+      to: "/users",
+      children: [
+        { label: "CC Users List", to: "/users" },
+        { label: "Create CC User", to: "/users/create-cc-user" },
+      ],
+    },
     { icon: Contact, label: "Bookings", to: "/bookings" },
     { icon: StarIcon, label: "Feedbacks", to: "/feedbacks" },
     { icon: Contact, label: "Contacts", to: "/contacts" },
+    { icon: MessageSquare, label: "All Inquiries", to: "/all-inquiries" },
     { icon: Settings, label: "Settings", to: "/settings" },
     { icon: Download, label: "Download JSON", to: "/downloads" },
     { icon: LogIn, label: "Logout", to: "/logout" },
   ];
+
+  // Filter menu items based on role
+  const menuItems: MenuItem[] =
+    userRole === "cc_user"
+      ? [
+          { icon: MessageSquare, label: "All Inquiries", to: "/all-inquiries" },
+          { icon: LogIn, label: "Logout", to: "/logout" },
+        ]
+      : allMenuItems;
 
   const renderSubmenu = (items: MenuChild[], level = 1) => (
     <div className={`ml-${level * 4} mt-1 space-y-1 border-l border-sidebar-border/30 pl-3`}>
@@ -223,7 +246,7 @@ const AdminSidebar = () => {
           {/* Header */}
           <div className="px-4 py-4 border-b border-sidebar-border/30 bg-sidebar/90">
             <div className="flex h-12 items-center">
-              <Link to="/dashboard" className="flex items-center gap-3 flex-1">
+              <Link to={userRole === "cc_user" ? "/all-inquiries" : "/dashboard"} className="flex items-center gap-3 flex-1">
                 <span className="bg-sidebar-primary text-white p-2 rounded-xl shadow">
                   J-T
                 </span>
@@ -232,7 +255,9 @@ const AdminSidebar = () => {
                     <h1 className="text-base font-semibold tracking-wide">
                       Jaipur-Thailand
                     </h1>
-                    <p className="text-xs opacity-70">Admin Portal</p>
+                    <p className="text-xs opacity-70">
+                      {userRole === "cc_user" ? "CC User Portal" : "Admin Portal"}
+                    </p>
                   </div>
                 )}
               </Link>

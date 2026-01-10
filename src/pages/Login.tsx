@@ -33,12 +33,17 @@ try {
   const user = res.data.data; // ✅ correct extract
   const role = user.role;
   //  console.log("Logged in user:", user); // Debugging line
-  if (role === "admin" || role === "super admin") {
+  if (role === "admin" || role === "cc_user") {
     localStorage.setItem("isAuthenticated", "true");
     localStorage.setItem("user", JSON.stringify(user));
     
     toast.success("Login successful!");
-    navigate("/dashboard");
+    // Redirect cc_user to inquiries page, admin to dashboard
+    if (role === "cc_user") {
+      navigate("/all-inquiries");
+    } else {
+      navigate("/dashboard");
+    }
   } else {
     toast.success("You are not authorized as admin");
     // console.log("dlkfajdkf")
