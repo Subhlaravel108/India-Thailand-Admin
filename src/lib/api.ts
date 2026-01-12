@@ -259,15 +259,17 @@ export const changeInquiryStatus = async ({
 
 export const sendInquiryMessage = async ({
   inquiry_id,
+  source,
   message,
 }: {
   inquiry_id: string;
   message: string;
+  source:string;
 }) => {
   const token = JSON.parse(localStorage.getItem("user") || "{}")?.token || "";
   const response = await api.post(
-    `/inquiry/message/${inquiry_id}`,
-    { message },
+    `/cc/message`,
+    { message,inquiry_id,source },
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -291,6 +293,28 @@ export const assignInquiry = async ({
     {
       headers: {
         Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data;
+};
+
+export const fetchInquiryMessages = async ({
+  inquiry_id,
+  source,
+}: {
+  inquiry_id: string;
+  source: string; // booking / contact / service
+}) => {
+  const token = JSON.parse(localStorage.getItem("user") || "{}")?.token || "";
+  const response = await api.get(
+    `/inquiry/${inquiry_id}/messages`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+        source,
       },
     }
   );

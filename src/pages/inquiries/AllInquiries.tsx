@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchAllInquiries, changeInquiryStatus, sendInquiryMessage, assignInquiry } from "@/lib/api";
+import { fetchAllInquiries, changeInquiryStatus, sendInquiryMessage, assignInquiry, fetchInquiryMessages } from "@/lib/api";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -35,7 +35,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Eye, Search, MessageSquare, MoreVertical, UserPlus } from "lucide-react";
+import { Eye, Search, MessageSquare, MoreVertical, UserPlus, History } from "lucide-react";
 import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -57,6 +57,10 @@ const AllInquiries = () => {
   const [assigningInquiry, setAssigningInquiry] = useState<any>(null);
   const [assignSource, setAssignSource] = useState<string>("");
   const [assigning, setAssigning] = useState(false);
+  const [showMessageHistoryModal, setShowMessageHistoryModal] = useState(false);
+  const [messageHistory, setMessageHistory] = useState<any[]>([]);
+  const [loadingMessages, setLoadingMessages] = useState(false);
+  const [selectedInquiryForHistory, setSelectedInquiryForHistory] = useState<any>(null);
 
   // ✅ Get user role on component mount
   useEffect(() => {
@@ -65,23 +69,23 @@ const AllInquiries = () => {
   }, []);
 
   // ✅ Load inquiries
-  useEffect(() => {
-    const loadInquiries = async () => {
-      try {
-        setLoading(true);
-        const res = await fetchAllInquiries({ page, search: searchQuery });
-        console.log("📬 Inquiry Data:", res);
+  const loadInquiries = async () => {
+    try {
+      setLoading(true);
+      const res = await fetchAllInquiries({ page, search: searchQuery });
+      // console.log("📬 Inquiry Data:", res);
 
-        // If cc_user, API should already filter by their assigned inquiries
-        setInquiries(res.data || []);
-        setTotalPages(res.pagination?.totalPages || 1);
-      } catch (err: any) {
-        console.error("❌ Error loading inquiries:", err);
-        toast.error(err?.response?.data?.message || "Failed to load inquiries");
-      } finally {
-        setLoading(false);
-      }
-    };
+      // If cc_user, API should already filter by their assigned inquiries
+      setInquiries(res.data || []);
+      setTotalPages(res.pagination?.totalPages || 1);
+    } catch (err: any) {
+      console.error("❌ Error loading inquiries:", err);
+      toast.error(err?.response?.data?.message || "Failed to load inquiries");
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
     loadInquiries();
   }, [page, searchQuery]);
 
@@ -135,6 +139,8 @@ const AllInquiries = () => {
         });
       } finally {
         setChangingStatus(null);
+        loadInquiries()
+        
       }
     }
   };
@@ -164,6 +170,7 @@ const AllInquiries = () => {
       await sendInquiryMessage({
         inquiry_id: selectedInquiry._id || selectedInquiry.id,
         message: messageText,
+        source: selectedInquiry.source
       });
       Swal.fire({
         icon: "success",
@@ -206,13 +213,26 @@ const AllInquiries = () => {
       return;
     }
 
+    // Close Dialog first to avoid z-index conflict
+    setShowAssignModal(false);
+    
+    // Small delay to ensure Dialog is closed before showing Swal
+    await new Promise(resolve => setTimeout(resolve, 100));
+
     const result = await Swal.fire({
       title: "Assign Inquiry",
       text: `Are you sure you want to assign this inquiry with source "${assignSource}"?`,
       icon: "question",
       showCancelButton: true,
-      confirmButtonText: "Yes, assign it!",
+      confirmButtonText: "Yes, Assign",
       cancelButtonText: "Cancel",
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#6c757d",
+      buttonsStyling: true,
+      allowOutsideClick: false,
+      customClass: {
+        container: 'swal2-container-high-z'
+      }
     });
 
     if (result.isConfirmed) {
@@ -245,6 +265,28 @@ const AllInquiries = () => {
       } finally {
         setAssigning(false);
       }
+    }
+  };
+
+  // ✅ Fetch and display message history
+  const handleViewMessageHistory = async (inquiry: any) => {
+    setSelectedInquiryForHistory(inquiry);
+    setShowMessageHistoryModal(true);
+    setLoadingMessages(true);
+    setMessageHistory([]);
+
+    try {
+      const res = await fetchInquiryMessages({
+        inquiry_id: inquiry._id || inquiry.id,
+        source: inquiry.source || "service",
+      });
+      setMessageHistory(res.data || res.messages || []);
+    } catch (error: any) {
+      console.error("Error fetching message history:", error);
+      toast.error(error?.response?.data?.message || "Failed to load message history");
+      setMessageHistory([]);
+    } finally {
+      setLoadingMessages(false);
     }
   };
 
@@ -304,12 +346,12 @@ const AllInquiries = () => {
                     <TableCell>
                       {i.name} {i.lastname || ""}
                     </TableCell>
-                    <TableCell>{i.email || "-"}</TableCell>
+                    <TableCell className="max-w-[170px] truncate">{i.email || "-"}</TableCell>
                     <TableCell>{i.phone || "-"}</TableCell>
-                    <TableCell className="max-w-[200px] truncate">
+                    <TableCell className="max-w-[150px] truncate">
                       {i.source || "-"}
                     </TableCell>
-                    <TableCell className="max-w-[200px] truncate">
+                    <TableCell className="max-w-[150px] truncate">
                       {i.message || "-"}
                     </TableCell>
                     <TableCell>
@@ -410,6 +452,13 @@ const AllInquiries = () => {
                                 <MessageSquare className="mr-2 h-4 w-4" />
                                 Send Message
                               </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => handleViewMessageHistory(i)}
+                                className="cursor-pointer"
+                              >
+                                <History className="mr-2 h-4 w-4" />
+                                View Message History
+                              </DropdownMenuItem>
                               
                               <DropdownMenuSeparator />
                               
@@ -428,14 +477,24 @@ const AllInquiries = () => {
                           </DropdownMenu>
                         </div>
                       ) : (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setSelectedInquiry(i)}
-                          className="h-8"
-                        >
-                          <Eye className="w-4 h-4 mr-1" /> View
-                        </Button>
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setSelectedInquiry(i)}
+                            className="h-8"
+                          >
+                            <Eye className="w-4 h-4 mr-1" /> View
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleViewMessageHistory(i)}
+                            className="h-8"
+                          >
+                            <History className="w-4 h-4 mr-1" /> History
+                          </Button>
+                        </div>
                       )}
                     </TableCell>
                   </TableRow>
@@ -505,11 +564,11 @@ const AllInquiries = () => {
                   <strong>Status:</strong>{" "}
                   <span
                     className={`px-2 py-1 rounded text-sm font-medium ${
-                      selectedInquiry.status === "read" ||
-                      selectedInquiry.status === "Read"
+                      selectedInquiry.status === "new" ||
+                      selectedInquiry.status === "New"
                         ? "bg-green-100 text-green-800"
-                        : selectedInquiry.status === "pending" ||
-                          selectedInquiry.status === "Pending"
+                        : selectedInquiry.status === "In Progress" ||
+                          selectedInquiry.status === "In Progress"
                         ? "bg-yellow-100 text-yellow-800"
                         : "bg-gray-100 text-gray-800"
                     }`}
@@ -700,6 +759,84 @@ const AllInquiries = () => {
                   Assign Inquiry
                 </>
               )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 📜 Message History Modal */}
+      <Dialog open={showMessageHistoryModal} onOpenChange={setShowMessageHistoryModal}>
+        <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Message History</DialogTitle>
+            <DialogDescription>
+              {selectedInquiryForHistory && (
+                <>Messages for {selectedInquiryForHistory.name} ({selectedInquiryForHistory.email})</>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            {loadingMessages ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-6 h-6 animate-spin text-gray-500 mr-2" />
+                <span className="text-gray-500">Loading messages...</span>
+              </div>
+            ) : messageHistory.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                No messages found for this inquiry.
+              </div>
+            ) : (
+              <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+                {messageHistory.map((msg: any, index: number) => (
+                  <div
+                    key={msg._id || msg.id || index}
+                    className="border rounded-lg p-4 bg-gray-50 hover:bg-gray-100 transition-colors"
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          {msg.sender && (
+                            <span className="text-sm font-semibold text-gray-700">
+                              {typeof msg.sender === "object" ? msg.sender.name || msg.sender.email : msg.sender}
+                            </span>
+                          )}
+                          {msg.role && (
+                            <span className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded">
+                              {msg.role}
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-sm text-gray-600 whitespace-pre-wrap break-words">
+                          {msg.message || msg.text || "-"}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center mt-2 pt-2 border-t border-gray-200">
+                      <span className="text-xs text-gray-500">
+                        {msg.createdAt
+                          ? format(new Date(msg.createdAt), "dd MMM yyyy, hh:mm a")
+                          : msg.created_at
+                          ? format(new Date(msg.created_at), "dd MMM yyyy, hh:mm a")
+                          : msg.timestamp
+                          ? format(new Date(msg.timestamp), "dd MMM yyyy, hh:mm a")
+                          : "-"}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowMessageHistoryModal(false);
+                setSelectedInquiryForHistory(null);
+                setMessageHistory([]);
+              }}
+            >
+              Close
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -158,3 +158,34 @@
 .btn-red {
   @apply px-3 py-1 bg-red-500 text-white rounded;
 }
+
+/* Fix SweetAlert2 button cursor issue and z-index */
+.swal2-container {
+  z-index: 9999 !important;
+}
+
+.swal2-container.swal2-container-high-z {
+  z-index: 10000 !important;
+}
+
+.swal2-confirm,
+.swal2-cancel {
+  cursor: pointer !important;
+  width: auto !important;
+  min-width: auto !important;
+  padding: 0.625em 1.5em !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+}
+
+.swal2-actions {
+  gap: 0.5em !important;
+  flex-wrap: nowrap !important;
+}
+
+.swal2-confirm:focus,
+.swal2-cancel:focus {
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5) !important;
+}
