@@ -2,8 +2,8 @@ import axios from "axios";
 // import { URLSearchParams } from "url";
 
 const api = axios.create({
-  // baseURL: "http://127.0.0.1:3001/api/",
-  baseURL: "https://india-thailand-api-8.onrender.com/api/",
+  baseURL: "http://127.0.0.1:3001/api/",
+  // baseURL: "https://india-thailand-api-8.onrender.com/api/",
 });
 
 export default api;
@@ -222,15 +222,21 @@ export const fetchFeedbacks=async({page=1,search=""}={})=>{
   return res.data
 }
 
-export const fetchAllInquiries=async({page=1,search=""}={})=>{
+export const fetchAllInquiries=async({page=1,search="",serviceType=""}={})=>{
+  const params: any = {
+    page,
+    search 
+  };
+  
+  if (serviceType && serviceType.trim() !== "") {
+    params.serviceType = serviceType.trim();
+  }
+  
   const res=await api.get("/all-inquiries",{
     headers:{
       Authorization:`Bearer ${token}`
     },
-    params:{
-      page,
-      search 
-    }
+    params
   })
   return res.data
 }

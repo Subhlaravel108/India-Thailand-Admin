@@ -44,6 +44,7 @@ import Swal from "sweetalert2";
 const AllInquiries = () => {
   const [inquiries, setInquiries] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [serviceType, setServiceType] = useState<string>("all");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -72,7 +73,7 @@ const AllInquiries = () => {
   const loadInquiries = async () => {
     try {
       setLoading(true);
-      const res = await fetchAllInquiries({ page, search: searchQuery });
+      const res = await fetchAllInquiries({ page, search: searchQuery, serviceType: serviceType === "all" ? "" : serviceType });
       // console.log("📬 Inquiry Data:", res);
 
       // If cc_user, API should already filter by their assigned inquiries
@@ -87,11 +88,17 @@ const AllInquiries = () => {
   };
   useEffect(() => {
     loadInquiries();
-  }, [page, searchQuery]);
+  }, [page, searchQuery, serviceType]);
 
   // ✅ Handle search
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
+    setPage(1);
+  };
+
+  // ✅ Handle service type filter change
+  const handleServiceTypeChange = (value: string) => {
+    setServiceType(value);
     setPage(1);
   };
 
@@ -253,7 +260,7 @@ const AllInquiries = () => {
         setAssigningInquiry(null);
         setAssignSource("");
         // Reload inquiries to reflect the assignment
-        const res = await fetchAllInquiries({ page, search: searchQuery });
+        const res = await fetchAllInquiries({ page, search: searchQuery, serviceType: serviceType === "all" ? "" : serviceType });
         setInquiries(res.data || []);
         setTotalPages(res.pagination?.totalPages || 1);
       } catch (error: any) {
@@ -297,15 +304,31 @@ const AllInquiries = () => {
       </div>
 
       <Card className="p-4 shadow-md">
-        {/* 🔍 Search Input */}
-        <div className="flex items-center mb-4">
-          <Search className="w-5 h-5 text-gray-500 mr-2" />
-          <Input
-            placeholder="Search by name, email, phone, subject, or message..."
-            value={searchQuery}
-            onChange={handleSearch}
-            className="max-w-sm"
-          />
+        {/* 🔍 Search Input and Filters */}
+        <div className="flex items-center gap-4 mb-4 flex-wrap">
+          <div className="flex items-center flex-1 min-w-[200px]">
+            <Search className="w-5 h-5 text-gray-500 mr-2" />
+            <Input
+              placeholder="Search by name, email, phone, subject ..."
+              value={searchQuery}
+              onChange={handleSearch}
+              className="max-w-sm"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium text-gray-700 whitespace-nowrap">Service Type:</label>
+            <Select value={serviceType} onValueChange={handleServiceTypeChange}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="All Types" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="booking">Booking</SelectItem>
+                <SelectItem value="contact">Contact</SelectItem>
+                <SelectItem value="service">Service</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         {/* 📋 Table */}
@@ -317,8 +340,8 @@ const AllInquiries = () => {
                 <TableHead className="px-4 py-2">Name</TableHead>
                 <TableHead className="px-4 py-2">Email</TableHead>
                 <TableHead className="px-4 py-2">Phone</TableHead>
+                <TableHead className="px-4 py-2">Service</TableHead>
                 <TableHead className="px-4 py-2">Subject</TableHead>
-                <TableHead className="px-4 py-2">Message</TableHead>
                 <TableHead className="px-4 py-2">Status</TableHead>
                 <TableHead className="px-4 py-2">Created</TableHead>
                 <TableHead className="px-4 py-2 text-right">Actions</TableHead>
@@ -352,7 +375,7 @@ const AllInquiries = () => {
                       {i.source || "-"}
                     </TableCell>
                     <TableCell className="max-w-[150px] truncate">
-                      {i.message || "-"}
+                      {i.type || "-"}
                     </TableCell>
                     <TableCell>
                       <span
@@ -548,9 +571,9 @@ const AllInquiries = () => {
               <div>
                 <strong>Phone:</strong> {selectedInquiry.phone || "-"}
               </div>
-              {selectedInquiry.subject && (
+              {selectedInquiry.type && (
                 <div>
-                  <strong>Subject:</strong> {selectedInquiry.subject}
+                  <strong>Subject:</strong> {selectedInquiry.type}
                 </div>
               )}
               <div className="break-words whitespace-pre-line">
