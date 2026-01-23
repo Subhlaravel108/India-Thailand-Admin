@@ -34,8 +34,10 @@ try {
   const role = user.role;
   //  console.log("Logged in user:", user); // Debugging line
   if (role === "admin" || role === "cc_user") {
+    localStorage.setItem("token",user.token)
     localStorage.setItem("isAuthenticated", "true");
     localStorage.setItem("user", JSON.stringify(user));
+
     
     toast.success("Login successful!");
     // Redirect cc_user to inquiries page, admin to dashboard
